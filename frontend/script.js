@@ -217,9 +217,31 @@ async function sendQueryStreaming(message, bubbleEl) {
   let buffer = '';
   let fullText = '';
   let loadingHidden = false;
+  let firstChunkTime = null;
+  const STREAM_TIMEOUT_MS = 8000; // if no token in 8s, proxy is buffering — fall back
 
   while (true) {
-    const { done, value } = await reader.read();
+    // Apply timeout only while waiting for the first token
+    let readPromise = reader.read();
+    if (!loadingHidden) {
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('STREAM_TIMEOUT')), STREAM_TIMEOUT_MS)
+      );
+      try {
+        var { done, value } = await Promise.race([readPromise, timeoutPromise]);
+      } catch (err) {
+        if (err.message === 'STREAM_TIMEOUT') {
+          // Proxy is buffering — fall back to non-streaming
+          reader.cancel();
+          await sendQueryFallback(message, bubbleEl);
+          return;
+        }
+        throw err;
+      }
+    } else {
+      var { done, value } = await readPromise;
+    }
+
     if (done) break;
 
     buffer += decoder.decode(value, { stream: true });
@@ -250,6 +272,27 @@ async function sendQueryStreaming(message, bubbleEl) {
       }
     }
   }
+}
+
+async function sendQueryFallback(message, bubbleEl) {
+  // Non-streaming fallback for environments where SSE is buffered (e.g. Render free proxy)
+  const response = await fetch(`${API_BASE}/query`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message,
+      session_id: state.sessionId,
+      customer_id: state.customerId || null,
+    }),
+  });
+
+  if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+  const data = await response.json();
+  hideLoading();
+  bubbleEl.innerHTML = renderMarkdown(data.response);
+  saveTrace(data.trace, message);
+  maybeRefreshOrders(data.trace);
 }
 
 // ==================== TRACE (write-only — SRE dashboard reads this) ====================
