@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AtlasCare — Customer Support</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/chat.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <a href="/" class="logo" style="text-decoration:none;">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#grad1)"/>
+          <path d="M16 8L20 12L16 16L12 12L16 8Z" fill="white" opacity="0.9"/>
+          <path d="M16 16L20 20L16 24L12 20L16 16Z" fill="white" opacity="0.7"/>
+          <defs>
+            <linearGradient id="grad1" x1="0" y1="0" x2="32" y2="32">
+              <stop offset="0%" stop-color="#667eea"/>
+              <stop offset="100%" stop-color="#764ba2"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="logo-text">
+          <h1>AtlasCare</h1>
+          <span class="version">Customer Support</span>
+        </div>
+      </a>
+
+      <!-- Per-session stats -->
+      <div class="header-stats" id="sessionStats">
+        <div class="stat-card" id="sessionMsgCard" style="display:none">
+          <div class="stat-icon">💬</div>
+          <div class="stat-content">
+            <span class="stat-value" id="sessionMsgCount">0</span>
+            <span class="stat-label">Messages</span>
+          </div>
+        </div>
+        <div class="stat-card" id="sessionLatencyCard" style="display:none">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-content">
+            <span class="stat-value" id="sessionAvgLatency">—</span>
+            <span class="stat-label">Avg Response</span>
+          </div>
+        </div>
+      </div>
+
+      <a href="/" class="ops-link" title="Back to Home">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h4a1 1 0 001-1v-4h2v4a1 1 0 001 1h4a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <!-- Two-column layout -->
+  <main class="chat-main">
+
+    <!-- LEFT: Orders sidebar -->
+    <aside class="orders-sidebar" id="ordersSidebar">
+      <div class="orders-sidebar-header">
+        <h2>
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>
+            <path d="M16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+          </svg>
+          Your Orders
+        </h2>
+        <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" title="Collapse sidebar">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="orders-hint">
+        Click an order ID or action to pre-fill the chat ↓
+      </div>
+
+      <div class="orders-list" id="ordersList">
+        <div class="orders-loading" id="ordersLoading">
+          <div class="spinner" style="width:24px;height:24px;border-width:3px;margin:0 auto 0.5rem"></div>
+          <span>Loading orders…</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Collapsed tab (shown when sidebar is collapsed) -->
+    <button class="sidebar-expand-tab" id="sidebarExpandTab" title="Show orders">
+      <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3z"/>
+      </svg>
+      Orders
+    </button>
+
+    <!-- RIGHT: Chat -->
+    <section class="chat-section">
+      <div class="chat-header">
+        <h2>
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+          </svg>
+          How can I help you today?
+        </h2>
+        <div class="connection-status">
+          <span class="status-dot"></span>
+          <span class="status-text">Connected</span>
+        </div>
+      </div>
+
+      <div class="chat-window" id="chatWindow">
+        <div class="welcome-message" id="welcomeMessage">
+          <div class="welcome-icon">👋</div>
+          <h3>Welcome to AtlasCare!</h3>
+          <p>I'm your AI-powered customer support agent. Choose a topic or type your question below.</p>
+          <div class="prompt-grid">
+            <button class="prompt-chip" data-prompt="Where is my order ORD-?">
+              <span class="chip-icon">📦</span>
+              <span class="chip-label">Track my order</span>
+              <span class="chip-sub">Order status &amp; tracking</span>
+            </button>
+            <button class="prompt-chip" data-prompt="I want to cancel my order ORD-">
+              <span class="chip-icon">❌</span>
+              <span class="chip-label">Cancel my order</span>
+              <span class="chip-sub">Full cancellation</span>
+            </button>
+            <button class="prompt-chip" data-prompt="Please cancel item 1 from order ORD- and refund to HDFC_CREDIT">
+              <span class="chip-icon">🔄</span>
+              <span class="chip-label">Cancel item &amp; refund</span>
+              <span class="chip-sub">Partial cancellation</span>
+            </button>
+            <button class="prompt-chip" data-prompt="I received a damaged product on order ORD- and want a refund">
+              <span class="chip-icon">🚨</span>
+              <span class="chip-label">Damaged product</span>
+              <span class="chip-sub">Refund request</span>
+            </button>
+            <button class="prompt-chip" data-prompt="What was my last inquiry about?">
+              <span class="chip-icon">🕐</span>
+              <span class="chip-label">Past interactions</span>
+              <span class="chip-sub">Support history</span>
+            </button>
+            <button class="prompt-chip" data-prompt="What is the status of my case CASE-">
+              <span class="chip-icon">📋</span>
+              <span class="chip-label">Check case status</span>
+              <span class="chip-sub">Escalation update</span>
+            </button>
+            <button class="prompt-chip" data-prompt="What is the return policy and refund window?">
+              <span class="chip-icon">📖</span>
+              <span class="chip-label">Return policy</span>
+              <span class="chip-sub">Policy questions</span>
+            </button>
+            <button class="prompt-chip" data-prompt="Can you update the shipping address for order ORD- to my office address?">
+              <span class="chip-icon">📍</span>
+              <span class="chip-label">Update address</span>
+              <span class="chip-sub">Shipping update</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <form id="chatForm" class="chat-input">
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Ask about your order, refunds, returns, policies…"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="sendBtn">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+          </svg>
+          Send
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <!-- Confirmation Modal -->
+  <div class="modal-overlay" id="confirmModal" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-icon">⚠️</div>
+      <h2>Are you sure?</h2>
+      <p id="confirmModalText">This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" id="confirmCancelBtn">No, go back</button>
+        <button class="modal-btn danger" id="confirmOkBtn">Yes, proceed</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Processing your request…</p>
+      <span class="loading-hint">This may take a few seconds</span>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+AtlasCare — Test Plan Summary
+================================
+Version 3.0 | LangGraph + Pydantic AI
+
+COVERED
+-------
+1. Unit tests (tests/test_agent.py)
+   - J1: single get_order_status, latency < 3s
+   - J2: cancel before refund; shipping update
+   - J3: guardrail blocks execute_refund; CRM case has trace_id
+
+2. E2E latency (tests/test_latency_e2e.py)
+   - J1/J2/J3 against live POST /query when server running
+
+3. Manual UI (docs/TESTING.md)
+   - Trace manager, journey filters, tool call details
+
+4. Guardrail
+   - Rs.42000 / Rs formats trigger escalation
+
+5. API contract
+   - POST /query and GET /health per assignment spec
+
+OUT OF SCOPE (this submission)
+------------------------------
+- Load test at 18K requests/day
+- Auth, rate limiting, production DB
+- Multi-turn session memory
+- KB-driven policy journey (tool exists, not default path)
+
+BEFORE PRODUCTION
+-----------------
+- Expand synthetic data per schema (20+ orders)
+- Session history for follow-up questions
+- Golden-set LLM regression for novel J2 utterances
+- SRE runbooks + alert thresholds on /metrics
+- Compliance audit export (traces + cases)
+
+RUN
+---
+  pip install -r requirements.txt
+  export GEMINI_API_KEY=<key>
+  uvicorn main:app --port 8000
+  pytest tests/ -v

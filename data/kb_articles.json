@@ -1,0 +1,210 @@
+{
+  "articles": [
+    {
+      "article_id": "KB-001",
+      "title": "Refund Policy and Threshold Rules",
+      "tags": [
+        "refund",
+        "threshold",
+        "payments",
+        "escalation"
+      ],
+      "content": "Acme Retail processes refunds automatically for amounts up to Rs.25,000 via the Payments Gateway. Refund requests exceeding Rs.25,000 must be escalated to a human specialist via the CRM.",
+      "last_updated": "2025-04-01",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-002",
+      "title": "Return Window Policy",
+      "tags": [
+        "return",
+        "window",
+        "policy"
+      ],
+      "content": "Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full refund regardless of value, subject to specialist approval for amounts above the threshold.",
+      "last_updated": "2025-04-01",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-003",
+      "title": "Escalation SLA",
+      "tags": [
+        "escalation",
+        "sla",
+        "response"
+      ],
+      "content": "The specialist team has a 24-hour response SLA for all escalated cases.",
+      "last_updated": "2025-04-01",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-004",
+      "title": "Partial Cancellation and Reshipping",
+      "tags": [
+        "cancellation",
+        "partial",
+        "reshipping",
+        "address"
+      ],
+      "content": "Customers can cancel individual line items from an order. The remainder of the order will be shipped normally. Customers may also update their shipping address for the remaining items before they are shipped.",
+      "last_updated": "2025-04-01",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-005",
+      "title": "Supported Payment Methods",
+      "tags": [
+        "payment",
+        "upi",
+        "credit_card",
+        "debit_card",
+        "cod",
+        "refund"
+      ],
+      "content": "Acme Retail supports the following payment methods: UPI, HDFC Credit Card, ICICI Debit Card, SBI Credit Card, and Cash on Delivery (COD). Refunds are processed back to the original payment method. COD refunds are issued as store credit or bank transfer via NEFT within 5–7 business days. UPI and card refunds are processed within 3–5 business days.",
+      "last_updated": "2025-04-15",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-006",
+      "title": "Damaged or Defective Product Policy",
+      "tags": [
+        "damaged_product",
+        "defective",
+        "doa",
+        "refund",
+        "replacement"
+      ],
+      "content": "If a product is delivered damaged or is dead-on-arrival (DOA), the customer must report it within 48 hours of delivery with photo evidence. For electronics, Acme Retail offers a full refund or replacement. For amounts above Rs.25,000, a specialist will review the claim within the 24-hour SLA before approving the refund. Apparel and home goods damaged in transit are eligible for full refund or exchange within 7 days of delivery.",
+      "last_updated": "2025-04-15",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-007",
+      "title": "Order Tracking and Shipping SLAs",
+      "tags": [
+        "tracking",
+        "shipping",
+        "delivery",
+        "sla",
+        "status"
+      ],
+      "content": "Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is assigned and the estimated delivery is 5–7 business days for metro cities and 7–10 business days for non-metro areas. Customers can track their order using the tracking number on the Acme Retail portal or directly on the courier partner's website.",
+      "last_updated": "2025-04-15",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-008",
+      "title": "Exchange Policy",
+      "tags": [
+        "exchange",
+        "size",
+        "wrong_item",
+        "apparel",
+        "return"
+      ],
+      "content": "Customers can request an exchange for apparel items within 15 days of delivery if the product is unused and in original packaging. Exchanges are allowed for size issues or wrong item delivered. Electronics are not eligible for size-based exchanges but can be replaced if defective. To initiate an exchange, the customer must contact support with the order ID and reason.",
+      "last_updated": "2025-04-20",
+      "applies_to": [
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-009",
+      "title": "COD Order Modification and Prepayment Switch",
+      "tags": [
+        "cod",
+        "prepayment",
+        "upi",
+        "order_modification"
+      ],
+      "content": "Customers who placed a Cash on Delivery (COD) order can request to switch to a prepaid payment method (UPI or card) before the order is shipped. To do so, the customer must contact support with the order ID. The agent will cancel the COD order and raise a new prepaid order for the same items. This is not possible once the order is marked as shipped.",
+      "last_updated": "2025-05-01",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-010",
+      "title": "Address Update for In-Transit Orders",
+      "tags": [
+        "address_change",
+        "shipping",
+        "in_transit",
+        "reshipping"
+      ],
+      "content": "Address changes for orders already in transit (status: shipped) are subject to courier partner availability. Customers must request the change within 24 hours of the order being marked shipped. Acme Retail will attempt a diversion request with the courier. If diversion is not possible, the parcel will be returned to origin and reshipped to the new address, adding 3–5 business days to the delivery timeline.",
+      "last_updated": "2025-05-01",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    },
+    {
+      "article_id": "KB-011",
+      "title": "Warranty Claims for Electronics",
+      "tags": [
+        "warranty",
+        "electronics",
+        "repair",
+        "manufacturer"
+      ],
+      "content": "All electronics sold on Acme Retail carry the manufacturer's warranty. For warranty claims after the 30-day return window, customers must contact the brand's service centre directly. Acme Retail can provide purchase proof (invoice) on request to facilitate warranty claims. In-warranty repairs do not qualify for refunds through Acme Retail but may be eligible under the manufacturer's policy.",
+      "last_updated": "2025-05-05",
+      "applies_to": [
+        "electronics"
+      ]
+    },
+    {
+      "article_id": "KB-012",
+      "title": "Customer Tier Benefits",
+      "tags": [
+        "tier",
+        "bronze",
+        "silver",
+        "gold",
+        "platinum",
+        "loyalty"
+      ],
+      "content": "Acme Retail offers four customer tiers — Bronze, Silver, Gold, and Platinum — based on cumulative spend. Bronze: standard support SLA (48h). Silver: priority support, 10% cashback on select categories. Gold: dedicated support line, 15% cashback, free expedited shipping on orders above Rs.5,000. Platinum: 24/7 dedicated support, 20% cashback, free same-day delivery in select cities, and automatic refund approval up to Rs.50,000.",
+      "last_updated": "2025-05-10",
+      "applies_to": [
+        "electronics",
+        "apparel",
+        "home_goods"
+      ]
+    }
+  ]
+}

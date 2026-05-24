@@ -1,0 +1,35 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+server.log
+
+# macOS
+.DS_Store
+
+# Archives
+*.zip
+*.tar.gz
+
+# IDE
+.idea/
+.vscode/
+
+# ChromaDB (rebuilt at runtime)
+data/chroma_db/
+
+# Claude Code internal
+.claude/
+CLAUDE.md

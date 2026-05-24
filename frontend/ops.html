@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AtlasCare — SRE Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/ops.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#grad1)"/>
+          <path d="M16 8L20 12L16 16L12 12L16 8Z" fill="white" opacity="0.9"/>
+          <path d="M16 16L20 20L16 24L12 20L16 16Z" fill="white" opacity="0.7"/>
+          <defs>
+            <linearGradient id="grad1" x1="0" y1="0" x2="32" y2="32">
+              <stop offset="0%" stop-color="#667eea"/>
+              <stop offset="100%" stop-color="#764ba2"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="logo-text">
+          <h1>AtlasCare</h1>
+          <span class="version">SRE &amp; Engineering Dashboard</span>
+        </div>
+      </div>
+
+      <!-- Global system stats -->
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-content">
+            <span class="stat-value" id="totalRequests">—</span>
+            <span class="stat-label">Total Requests</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-content">
+            <span class="stat-value" id="avgLatency">—</span>
+            <span class="stat-label">Avg Latency</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-content">
+            <span class="stat-value" id="successRate">—</span>
+            <span class="stat-label">Success Rate</span>
+          </div>
+        </div>
+      </div>
+
+      <a href="/" class="ops-link" title="Back to Home">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h4a1 1 0 001-1v-4h2v4a1 1 0 001 1h4a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+        </svg>
+        Back to Home
+      </a>
+    </div>
+  </header>
+
+  <main class="ops-container">
+
+    <!-- LEFT: Trace list -->
+    <aside class="ops-sidebar">
+      <div class="sidebar-header">
+        <h2>
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+          </svg>
+          Trace Manager
+        </h2>
+        <div class="trace-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="J1">J1</button>
+          <button class="filter-btn" data-filter="J2">J2</button>
+          <button class="filter-btn" data-filter="J3">J3</button>
+        </div>
+      </div>
+
+      <div class="ops-sidebar-actions">
+        <button class="clear-btn" id="clearTracesBtn">
+          <svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          Clear
+        </button>
+        <button class="refresh-btn" id="refreshBtn">
+          <svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+
+      <div class="trace-list" id="traceList">
+        <div class="empty-state-small">
+          <p>No traces yet.</p>
+          <span>Send a message in Customer Chat to generate traces.</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- RIGHT: stacked panels -->
+    <div class="ops-right">
+
+      <!-- TOP: Trace detail -->
+      <section class="ops-detail-panel" id="traceDetailPanel">
+        <div class="ops-panel-header">
+          <h3>
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"/>
+            </svg>
+            Trace Detail
+          </h3>
+          <span class="ops-panel-hint" id="traceDetailHint">Select a trace on the left</span>
+        </div>
+        <div class="ops-panel-body" id="traceDetailBody">
+          <div class="ops-placeholder">
+            <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            <p>Click a trace to inspect tool calls, inputs &amp; outputs</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOTTOM: Live server logs -->
+      <section class="ops-logs-panel" id="logsPanel">
+        <div class="ops-panel-header">
+          <h3>
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+            </svg>
+            Server Logs
+          </h3>
+          <div class="log-controls">
+            <span class="log-live-badge" id="logLiveBadge">● LIVE</span>
+            <label class="log-filter-label">
+              Level:
+              <select id="logLevelFilter" class="log-level-select">
+                <option value="all">All</option>
+                <option value="ERROR">ERROR</option>
+                <option value="WARNING">WARNING</option>
+                <option value="INFO">INFO</option>
+                <option value="DEBUG">DEBUG</option>
+              </select>
+            </label>
+            <button class="clear-btn" id="clearLogsBtn" style="padding:0.3rem 0.6rem">Clear</button>
+            <button class="refresh-btn" id="scrollBottomBtn" style="padding:0.3rem 0.6rem">
+              <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              Bottom
+            </button>
+          </div>
+        </div>
+        <div class="ops-log-body" id="logBody">
+          <div class="ops-placeholder">
+            <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <p>Connecting to log stream…</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="/static/ops.js"></script>
+</body>
+</html>

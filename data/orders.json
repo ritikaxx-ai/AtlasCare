@@ -1,0 +1,311 @@
+{
+  "orders": [
+    {
+      "order_id": "ORD-78321",
+      "customer_id": "CUST-001",
+      "status": "shipped",
+      "created_at": "2025-05-01T10:30:00Z",
+      "estimated_delivery": "2025-05-08",
+      "tracking_number": "TRACK-7X9K2M",
+      "shipping_address": {
+        "line1": "4th Floor, Prestige Tower, Outer Ring Road",
+        "line2": "",
+        "city": "Bengaluru",
+        "state": "Karnataka",
+        "pincode": "560103"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-LAPTOP-001",
+          "name": "Dell Inspiron 15 Laptop",
+          "quantity": 1,
+          "unit_price": 55000.0,
+          "status": "active"
+        },
+        {
+          "line_id": 2,
+          "product_id": "PROD-BAG-021",
+          "name": "Laptop Backpack",
+          "quantity": 1,
+          "unit_price": 1500.0,
+          "status": "cancelled"
+        }
+      ],
+      "total_amount": 55000.0,
+      "payment_method": "HDFC_CREDIT"
+    },
+    {
+      "order_id": "ORD-78450",
+      "customer_id": "CUST-001",
+      "status": "cancelled",
+      "created_at": "2025-05-03T11:00:00Z",
+      "estimated_delivery": "2025-05-10",
+      "tracking_number": null,
+      "shipping_address": {
+        "line1": "12 MG Road",
+        "line2": "Koramangala",
+        "city": "Bengaluru",
+        "state": "Karnataka",
+        "pincode": "560034"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-HEADPHONES-002",
+          "name": "Sony WH-1000XM5",
+          "quantity": 1,
+          "unit_price": 8000.0,
+          "status": "cancelled"
+        }
+      ],
+      "total_amount": 0.0,
+      "payment_method": "UPI"
+    },
+    {
+      "order_id": "ORD-78100",
+      "customer_id": "CUST-002",
+      "status": "delivered",
+      "created_at": "2025-04-15T09:15:00Z",
+      "estimated_delivery": "2025-04-20",
+      "tracking_number": "TRACK-1A2B3C",
+      "shipping_address": {
+        "line1": "45 Baner Road",
+        "line2": "",
+        "city": "Pune",
+        "state": "Maharashtra",
+        "pincode": "411045"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-TSHIRT-05",
+          "name": "Graphic T-Shirt",
+          "quantity": 1,
+          "unit_price": 999.0,
+          "status": "active"
+        },
+        {
+          "line_id": 2,
+          "product_id": "PROD-JEANS-12",
+          "name": "Blue Denim Jeans",
+          "quantity": 1,
+          "unit_price": 2499.0,
+          "status": "active"
+        }
+      ],
+      "total_amount": 3498.0,
+      "payment_method": "ICICI_DEBIT"
+    },
+    {
+      "order_id": "ORD-78560",
+      "customer_id": "CUST-003",
+      "status": "delivered",
+      "created_at": "2025-04-20T08:00:00Z",
+      "estimated_delivery": "2025-04-26",
+      "tracking_number": "TRACK-9Z8Y7X",
+      "shipping_address": {
+        "line1": "22 Anna Salai",
+        "line2": "Nungambakkam",
+        "city": "Chennai",
+        "state": "Tamil Nadu",
+        "pincode": "600006"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-PHONE-011",
+          "name": "Samsung Galaxy S24",
+          "quantity": 1,
+          "unit_price": 74999.0,
+          "status": "active"
+        },
+        {
+          "line_id": 2,
+          "product_id": "PROD-COVER-003",
+          "name": "Phone Back Cover",
+          "quantity": 2,
+          "unit_price": 499.0,
+          "status": "active"
+        }
+      ],
+      "total_amount": 75997.0,
+      "payment_method": "SBI_CREDIT"
+    },
+    {
+      "order_id": "ORD-78612",
+      "customer_id": "CUST-003",
+      "status": "shipped",
+      "created_at": "2025-05-05T14:20:00Z",
+      "estimated_delivery": "2025-05-12",
+      "tracking_number": null,
+      "shipping_address": {
+        "line1": "22 Anna Salai",
+        "line2": "Nungambakkam",
+        "city": "Chennai",
+        "state": "Tamil Nadu",
+        "pincode": "600006"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-WATCH-007",
+          "name": "Noise ColorFit Pro Smartwatch",
+          "quantity": 1,
+          "unit_price": 4999.0,
+          "status": "active"
+        }
+      ],
+      "total_amount": 4999.0,
+      "payment_method": "UPI"
+    },
+    {
+      "order_id": "ORD-78705",
+      "customer_id": "CUST-004",
+      "status": "shipped",
+      "created_at": "2025-05-08T09:45:00Z",
+      "estimated_delivery": "2025-05-15",
+      "tracking_number": "TRACK-4P5Q6R",
+      "shipping_address": {
+        "line1": "Block B, Cyber Towers",
+        "line2": "Hitech City",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500081"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-TABLET-004",
+          "name": "iPad Air 11-inch",
+          "quantity": 1,
+          "unit_price": 59900.0,
+          "status": "active"
+        },
+        {
+          "line_id": 2,
+          "product_id": "PROD-STYLUS-001",
+          "name": "Apple Pencil 2nd Gen",
+          "quantity": 1,
+          "unit_price": 9900.0,
+          "status": "active"
+        },
+        {
+          "line_id": 3,
+          "product_id": "PROD-FOLIO-002",
+          "name": "iPad Folio Case",
+          "quantity": 1,
+          "unit_price": 3500.0,
+          "status": "active"
+        }
+      ],
+      "total_amount": 73300.0,
+      "payment_method": "HDFC_CREDIT"
+    },
+    {
+      "order_id": "ORD-78801",
+      "customer_id": "CUST-005",
+      "status": "shipped",
+      "created_at": "2025-05-10T16:30:00Z",
+      "estimated_delivery": "2025-05-17",
+      "tracking_number": null,
+      "shipping_address": {
+        "line1": "9 Park Street",
+        "line2": "",
+        "city": "Kolkata",
+        "state": "West Bengal",
+        "pincode": "700016"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-KURTI-008",
+          "name": "Cotton Embroidered Kurti",
+          "quantity": 3,
+          "unit_price": 1299.0,
+          "status": "active"
+        },
+        {
+          "line_id": 2,
+          "product_id": "PROD-DUPATTA-002",
+          "name": "Silk Dupatta",
+          "quantity": 2,
+          "unit_price": 899.0,
+          "status": "active"
+        }
+      ],
+      "total_amount": 5695.0,
+      "payment_method": "COD"
+    },
+    {
+      "order_id": "ORD-78933",
+      "customer_id": "CUST-004",
+      "status": "delivered",
+      "created_at": "2025-04-28T11:00:00Z",
+      "estimated_delivery": "2025-05-03",
+      "tracking_number": "TRACK-7H8I9J",
+      "shipping_address": {
+        "line1": "Block B, Cyber Towers",
+        "line2": "Hitech City",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pincode": "500081"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-MONITOR-005",
+          "name": "LG 27-inch 4K Monitor",
+          "quantity": 1,
+          "unit_price": 32000.0,
+          "status": "active"
+        },
+        {
+          "line_id": 2,
+          "product_id": "PROD-HDMICABLE-010",
+          "name": "HDMI 2.1 Cable 2m",
+          "quantity": 1,
+          "unit_price": 799.0,
+          "status": "active"
+        }
+      ],
+      "total_amount": 32799.0,
+      "payment_method": "ICICI_DEBIT"
+    },
+    {
+      "order_id": "ORD-79010",
+      "customer_id": "CUST-002",
+      "status": "cancelled",
+      "created_at": "2025-05-09T13:00:00Z",
+      "estimated_delivery": "2025-05-16",
+      "tracking_number": "TRACK-2K3L4M",
+      "shipping_address": {
+        "line1": "45 Baner Road",
+        "line2": "",
+        "city": "Pune",
+        "state": "Maharashtra",
+        "pincode": "411045"
+      },
+      "items": [
+        {
+          "line_id": 1,
+          "product_id": "PROD-KEYBOARD-013",
+          "name": "Keychron K2 Mechanical Keyboard",
+          "quantity": 1,
+          "unit_price": 7500.0,
+          "status": "cancelled"
+        },
+        {
+          "line_id": 2,
+          "product_id": "PROD-MOUSE-009",
+          "name": "Logitech MX Master 3",
+          "quantity": 1,
+          "unit_price": 8995.0,
+          "status": "cancelled"
+        }
+      ],
+      "total_amount": 0.0,
+      "payment_method": "UPI"
+    }
+  ]
+}

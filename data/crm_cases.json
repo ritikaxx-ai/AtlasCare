@@ -1,0 +1,802 @@
+{
+  "customers": [
+    {
+      "customer_id": "CUST-001",
+      "name": "Priya Sharma",
+      "email": "priya.sharma@email.com",
+      "phone": "+91-9876543210",
+      "tier": "gold",
+      "order_ids": [
+        "ORD-78321",
+        "ORD-78450"
+      ],
+      "preferred_refund_method": "HDFC_CREDIT",
+      "addresses": [
+        {
+          "label": "home",
+          "line1": "12 MG Road",
+          "line2": "Koramangala",
+          "city": "Bengaluru",
+          "state": "Karnataka",
+          "pincode": "560034"
+        },
+        {
+          "label": "office",
+          "line1": "4th Floor, Prestige Tower, Outer Ring Road",
+          "line2": "",
+          "city": "Bengaluru",
+          "state": "Karnataka",
+          "pincode": "560103"
+        }
+      ]
+    },
+    {
+      "customer_id": "CUST-002",
+      "name": "Rahul Verma",
+      "email": "rahul.verma@email.com",
+      "phone": "+91-9123456780",
+      "tier": "silver",
+      "order_ids": [
+        "ORD-78100",
+        "ORD-79010"
+      ],
+      "preferred_refund_method": "UPI",
+      "addresses": [
+        {
+          "label": "home",
+          "line1": "45 Baner Road",
+          "line2": "",
+          "city": "Pune",
+          "state": "Maharashtra",
+          "pincode": "411045"
+        }
+      ]
+    },
+    {
+      "customer_id": "CUST-003",
+      "name": "Ananya Krishnan",
+      "email": "ananya.krishnan@email.com",
+      "phone": "+91-9445512309",
+      "tier": "platinum",
+      "order_ids": [
+        "ORD-78560",
+        "ORD-78612"
+      ],
+      "preferred_refund_method": "SBI_CREDIT",
+      "addresses": [
+        {
+          "label": "home",
+          "line1": "22 Anna Salai",
+          "line2": "Nungambakkam",
+          "city": "Chennai",
+          "state": "Tamil Nadu",
+          "pincode": "600006"
+        }
+      ]
+    },
+    {
+      "customer_id": "CUST-004",
+      "name": "Vikram Nair",
+      "email": "vikram.nair@email.com",
+      "phone": "+91-9876001234",
+      "tier": "gold",
+      "order_ids": [
+        "ORD-78705",
+        "ORD-78933"
+      ],
+      "preferred_refund_method": "HDFC_CREDIT",
+      "addresses": [
+        {
+          "label": "office",
+          "line1": "Block B, Cyber Towers",
+          "line2": "Hitech City",
+          "city": "Hyderabad",
+          "state": "Telangana",
+          "pincode": "500081"
+        },
+        {
+          "label": "home",
+          "line1": "14 Jubilee Hills Road",
+          "line2": "",
+          "city": "Hyderabad",
+          "state": "Telangana",
+          "pincode": "500033"
+        }
+      ]
+    },
+    {
+      "customer_id": "CUST-005",
+      "name": "Meghna Das",
+      "email": "meghna.das@email.com",
+      "phone": "+91-9330098765",
+      "tier": "bronze",
+      "order_ids": [
+        "ORD-78801"
+      ],
+      "preferred_refund_method": "COD",
+      "addresses": [
+        {
+          "label": "home",
+          "line1": "9 Park Street",
+          "line2": "",
+          "city": "Kolkata",
+          "state": "West Bengal",
+          "pincode": "700016"
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "CASE-8F61CD",
+      "customer_id": "UNKNOWN",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-02381f98",
+      "created_at": "2026-05-22T12:01:53.027683Z"
+    },
+    {
+      "case_id": "CASE-0BF7A3",
+      "customer_id": "UNKNOWN",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-d9091915",
+      "created_at": "2026-05-22T12:10:18.192108Z"
+    },
+    {
+      "case_id": "CASE-DBFB6C",
+      "customer_id": "UNKNOWN",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-6d3ad322",
+      "created_at": "2026-05-22T12:11:42.784157Z"
+    },
+    {
+      "case_id": "CASE-286BE8",
+      "customer_id": "UNKNOWN",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-084830fc",
+      "created_at": "2026-05-22T12:34:49.137399Z"
+    },
+    {
+      "case_id": "CASE-548CDE",
+      "customer_id": "UNKNOWN",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-7e464aa6",
+      "created_at": "2026-05-22T12:37:05.507922Z"
+    },
+    {
+      "case_id": "CASE-325F50",
+      "customer_id": "UNKNOWN",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.25,001.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 25001.0,
+      "trace_id": "trc-4c4fcb92",
+      "created_at": "2026-05-22T12:37:07.826768Z"
+    },
+    {
+      "case_id": "CASE-242369",
+      "customer_id": "UNKNOWN",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.30,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 30000.0,
+      "trace_id": "trc-16c86635",
+      "created_at": "2026-05-22T12:37:10.455563Z"
+    },
+    {
+      "case_id": "CASE-3C239F",
+      "customer_id": "customer_id_not_provided",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested a refund of Rs. 20000 for order ORD-78321. Refund method is missing, and customer ID was not provided to retrieve profile.",
+      "amount_inr": 20000.0,
+      "trace_id": "trc-e612b8f0",
+      "created_at": "2026-05-22T12:37:42.930598Z"
+    },
+    {
+      "case_id": "CASE-DB504A",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-1c188c6d",
+      "created_at": "2026-05-22T12:54:43.387754+00:00"
+    },
+    {
+      "case_id": "CASE-4A97F7",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-5086eae0",
+      "created_at": "2026-05-22T13:14:59.367221+00:00"
+    },
+    {
+      "case_id": "CASE-997716",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-83fe4521",
+      "created_at": "2026-05-22T13:15:18.650307+00:00"
+    },
+    {
+      "case_id": "CASE-8F068C",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-1b92be7a",
+      "created_at": "2026-05-22T13:15:31.665652+00:00"
+    },
+    {
+      "case_id": "CASE-8844F1",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-649f28b7",
+      "created_at": "2026-05-22T13:16:31.408106+00:00"
+    },
+    {
+      "case_id": "CASE-9CEC98",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-cb204fdb",
+      "created_at": "2026-05-22T13:16:39.350793+00:00"
+    },
+    {
+      "case_id": "CASE-2BF6BC",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-51747f1d",
+      "created_at": "2026-05-22T13:17:22.760732+00:00"
+    },
+    {
+      "case_id": "CASE-F981EF",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-ae779203",
+      "created_at": "2026-05-22T13:23:18.642095+00:00"
+    },
+    {
+      "case_id": "CASE-7E639C",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-47f4388e",
+      "created_at": "2026-05-22T13:24:50.726285+00:00"
+    },
+    {
+      "case_id": "CASE-0FD941",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-f21592cb",
+      "created_at": "2026-05-22T13:26:23.160520+00:00"
+    },
+    {
+      "case_id": "CASE-E8F28A",
+      "customer_id": "UNKNOWN",
+      "order_id": "UNKNOWN",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.420,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 420000.0,
+      "trace_id": "trc-c1ff3bf0",
+      "created_at": "2026-05-22T13:26:58.056391+00:00"
+    },
+    {
+      "case_id": "CASE-91EB14",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-eb8e5d63",
+      "created_at": "2026-05-23T05:28:51.679843+00:00"
+    },
+    {
+      "case_id": "CASE-91B4CC",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-509b3558",
+      "created_at": "2026-05-23T07:08:00.343374+00:00"
+    },
+    {
+      "case_id": "CASE-5B18FE",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-d1e93c45",
+      "created_at": "2026-05-23T07:14:13.373759+00:00"
+    },
+    {
+      "case_id": "CASE-A1C2D3",
+      "customer_id": "CUST-003",
+      "order_id": "ORD-78560",
+      "status": "resolved",
+      "priority": "high",
+      "description": "Customer reported dead-on-arrival Samsung Galaxy S24. Refund of Rs.74,999.00 exceeds auto-refund threshold. Specialist approved full refund to SBI_CREDIT.",
+      "amount_inr": 74999.0,
+      "trace_id": "trc-a1b2c3d4",
+      "created_at": "2025-05-02T09:10:00.000000Z"
+    },
+    {
+      "case_id": "CASE-E4F5G6",
+      "customer_id": "CUST-003",
+      "order_id": "ORD-78612",
+      "status": "resolved",
+      "priority": "medium",
+      "description": "Customer cancelled Noise ColorFit Pro Smartwatch before shipment. Auto-refund of Rs.4,999.00 processed to UPI within SLA.",
+      "amount_inr": 4999.0,
+      "trace_id": "trc-e4f5g6h7",
+      "created_at": "2025-05-06T10:00:00.000000Z"
+    },
+    {
+      "case_id": "CASE-H7I8J9",
+      "customer_id": "CUST-004",
+      "order_id": "ORD-78933",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer reports LG 27-inch 4K Monitor delivered with cracked panel. Refund of Rs.32,000.00 exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 32000.0,
+      "trace_id": "trc-h7i8j9k0",
+      "created_at": "2025-05-05T14:30:00.000000Z"
+    },
+    {
+      "case_id": "CASE-K1L2M3",
+      "customer_id": "CUST-004",
+      "order_id": "ORD-78705",
+      "status": "open",
+      "priority": "medium",
+      "description": "Customer requesting address change for in-transit shipment ORD-78705 (iPad Air). New address: 14 Jubilee Hills Road, Hyderabad 500033.",
+      "amount_inr": 0.0,
+      "trace_id": "trc-k1l2m3n4",
+      "created_at": "2025-05-09T08:00:00.000000Z"
+    },
+    {
+      "case_id": "CASE-N4O5P6",
+      "customer_id": "CUST-002",
+      "order_id": "ORD-78100",
+      "status": "resolved",
+      "priority": "low",
+      "description": "Customer queried about return window for apparel items from ORD-78100. Advised 30-day return policy. No return initiated.",
+      "amount_inr": 0.0,
+      "trace_id": "trc-n4o5p6q7",
+      "created_at": "2025-04-25T11:00:00.000000Z"
+    },
+    {
+      "case_id": "CASE-Q7R8S9",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "status": "open",
+      "priority": "low",
+      "description": "Customer requested COD order ORD-78801 to be prepaid via UPI due to change in preference. Order still in processing; payment mode update pending.",
+      "amount_inr": 5695.0,
+      "trace_id": "trc-q7r8s9t0",
+      "created_at": "2025-05-11T10:45:00.000000Z"
+    },
+    {
+      "case_id": "CASE-DF52BE",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-e3d02550",
+      "created_at": "2026-05-23T10:42:29.721965+00:00"
+    },
+    {
+      "case_id": "CASE-50FCB0",
+      "customer_id": "UNKNOWN",
+      "order_id": "UNKNOWN",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer is asking for the status of case CASE-DF52BE. Customer ID and Order ID were not provided in the message.",
+      "amount_inr": null,
+      "trace_id": "trc-75ab0fb6",
+      "created_at": "2026-05-23T10:43:19.919518+00:00"
+    },
+    {
+      "case_id": "CASE-FC51B5",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-99389084",
+      "created_at": "2026-05-23T11:14:12.063621+00:00"
+    },
+    {
+      "case_id": "CASE-6AC193",
+      "customer_id": "current_customer_id",
+      "order_id": "ORD-78560",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer wants to cancel the entire order.",
+      "amount_inr": null,
+      "trace_id": "trc-a03f9f2f",
+      "created_at": "2026-05-23T11:25:58.915308+00:00"
+    },
+    {
+      "case_id": "CASE-028E14",
+      "customer_id": "CUSTOMER_ID_FROM_CONTEXT",
+      "order_id": "ORD-78933",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer wants to cancel entire order ORD-78933 and refund to HDFC card. Requires manual review to identify all line items, process multiple cancellations, and then execute a full refund.",
+      "amount_inr": null,
+      "trace_id": "trc-2876c768",
+      "created_at": "2026-05-23T11:40:08.726559+00:00"
+    },
+    {
+      "case_id": "CASE-A97CDB",
+      "customer_id": "unknown",
+      "order_id": "unknown",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer enquired about the status of case CASE-H7I8J9 but there is no tool to retrieve case status.",
+      "amount_inr": null,
+      "trace_id": "trc-f94084c4",
+      "created_at": "2026-05-23T11:56:51.952567+00:00"
+    },
+    {
+      "case_id": "CASE-8BDA55",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-326c68e5",
+      "created_at": "2026-05-23T13:39:14.699696+00:00"
+    },
+    {
+      "case_id": "CASE-15D8C6",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-a1253845",
+      "created_at": "2026-05-23T13:39:53.863625+00:00"
+    },
+    {
+      "case_id": "CASE-8FA61C",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-5676f54d",
+      "created_at": "2026-05-23T17:18:24.650529+00:00"
+    },
+    {
+      "case_id": "CASE-44FCAF",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-23692bc2",
+      "created_at": "2026-05-23T19:32:45.887236+00:00"
+    },
+    {
+      "case_id": "CASE-5E2C05",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-d18c2a83",
+      "created_at": "2026-05-23T19:35:37.914965+00:00"
+    },
+    {
+      "case_id": "CASE-C0F5C2",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-35dcec00",
+      "created_at": "2026-05-24T05:47:29.986716+00:00"
+    },
+    {
+      "case_id": "CASE-EB03A6",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-f17e289a",
+      "created_at": "2026-05-24T05:57:04.503682+00:00"
+    },
+    {
+      "case_id": "CASE-D0BB3D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-985b6d3f",
+      "created_at": "2026-05-24T05:57:08.201019+00:00"
+    },
+    {
+      "case_id": "CASE-4791C7",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-afef11e7",
+      "created_at": "2026-05-24T06:01:43.152420+00:00"
+    },
+    {
+      "case_id": "CASE-9E7E1B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.50,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 50000.0,
+      "trace_id": "trc-8b029dde",
+      "created_at": "2026-05-24T06:01:47.080908+00:00"
+    },
+    {
+      "case_id": "CASE-49A14E",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.60,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 60000.0,
+      "trace_id": "trc-2a70850f",
+      "created_at": "2026-05-24T06:01:48.151949+00:00"
+    },
+    {
+      "case_id": "CASE-A280C5",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.50,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 50000.0,
+      "trace_id": "trc-12b23828",
+      "created_at": "2026-05-24T06:33:03.755495+00:00"
+    },
+    {
+      "case_id": "CASE-72A1C1",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.60,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 60000.0,
+      "trace_id": "trc-d77f1e08",
+      "created_at": "2026-05-24T06:33:04.274064+00:00"
+    },
+    {
+      "case_id": "CASE-14CA3E",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-815fbedc",
+      "created_at": "2026-05-24T06:33:09.331571+00:00"
+    },
+    {
+      "case_id": "CASE-EEC5CA",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-d3b63e4e",
+      "created_at": "2026-05-24T06:33:11.441285+00:00"
+    },
+    {
+      "case_id": "CASE-E95817",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.50,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 50000.0,
+      "trace_id": "trc-84f04d1e",
+      "created_at": "2026-05-24T06:35:17.679821+00:00"
+    },
+    {
+      "case_id": "CASE-8AE701",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.60,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 60000.0,
+      "trace_id": "trc-6d58cece",
+      "created_at": "2026-05-24T06:35:18.056528+00:00"
+    },
+    {
+      "case_id": "CASE-504406",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-969bd7dc",
+      "created_at": "2026-05-24T06:35:21.842171+00:00"
+    },
+    {
+      "case_id": "CASE-430DAF",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-8c68b62c",
+      "created_at": "2026-05-24T06:35:23.682435+00:00"
+    },
+    {
+      "case_id": "CASE-3D0EAD",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.50,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 50000.0,
+      "trace_id": "trc-68760df8",
+      "created_at": "2026-05-24T06:37:34.014686+00:00"
+    },
+    {
+      "case_id": "CASE-5DF4DD",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-fcb2e3a4",
+      "created_at": "2026-05-24T06:37:36.126549+00:00"
+    },
+    {
+      "case_id": "CASE-673056",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-c1925666",
+      "created_at": "2026-05-24T06:37:37.691213+00:00"
+    },
+    {
+      "case_id": "CASE-51E868",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.50,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 50000.0,
+      "trace_id": "trc-c0b1f755",
+      "created_at": "2026-05-24T08:19:11.692072+00:00"
+    },
+    {
+      "case_id": "CASE-C07413",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-868f38db",
+      "created_at": "2026-05-24T12:55:37.788368+00:00"
+    },
+    {
+      "case_id": "CASE-8DFF78",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-e2abecd0",
+      "created_at": "2026-05-24T13:19:55.730988+00:00"
+    },
+    {
+      "case_id": "CASE-85761D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-a883687b",
+      "created_at": "2026-05-24T14:24:15.983128+00:00"
+    },
+    {
+      "case_id": "CASE-8BD885",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-91b9e221",
+      "created_at": "2026-05-24T15:11:53.947242+00:00"
+    }
+  ]
+}

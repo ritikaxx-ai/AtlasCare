@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AtlasCare</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .landing-wrap {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      padding: 2rem;
+    }
+
+    .landing-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .landing-logo h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .landing-logo p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .landing-cards {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .landing-card {
+      width: 260px;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .landing-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .landing-card.customer:hover {
+      border-color: #667eea;
+      box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+    }
+
+    .landing-card.sre:hover {
+      border-color: #10b981;
+      box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+    }
+
+    .card-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+    }
+
+    .landing-card.customer .card-icon {
+      background: rgba(102, 126, 234, 0.15);
+    }
+
+    .landing-card.sre .card-icon {
+      background: rgba(16, 185, 129, 0.15);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    .card-cta {
+      margin-top: 0.25rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      pointer-events: none; /* card itself is clickable */
+    }
+
+    .landing-card.customer .card-cta {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .landing-card.sre .card-cta {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="landing-wrap">
+    <div class="landing-logo">
+      <svg width="52" height="52" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" rx="8" fill="url(#g1)"/>
+        <path d="M16 8L20 12L16 16L12 12L16 8Z" fill="white" opacity="0.9"/>
+        <path d="M16 16L20 20L16 24L12 20L16 16Z" fill="white" opacity="0.7"/>
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="32" y2="32">
+            <stop offset="0%" stop-color="#667eea"/>
+            <stop offset="100%" stop-color="#764ba2"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1>AtlasCare</h1>
+      <p>Choose how you'd like to proceed</p>
+    </div>
+
+    <div class="landing-cards">
+
+      <!-- Customer Support -->
+      <div class="landing-card customer" id="customerCard">
+        <div class="card-icon">💬</div>
+        <div class="card-title">Customer Support</div>
+        <div class="card-desc">Get help with your orders, refunds, returns, and shipping updates.</div>
+        <div class="card-cta">Open Chat</div>
+      </div>
+
+      <!-- SRE Dashboard -->
+      <a class="landing-card sre" href="/ops">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title">SRE Dashboard</div>
+        <div class="card-desc">Inspect traces, tool calls, latency, and system health. For engineers and on-call SREs.</div>
+        <div class="card-cta">Open Dashboard</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Customer ID Modal -->
+  <div class="modal-overlay" id="customerIdModal" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-icon">🔐</div>
+      <h2>Welcome to AtlasCare</h2>
+      <p>Please enter your Customer ID to continue. This ensures we only show and modify <strong>your</strong> orders.</p>
+      <input type="text" id="customerIdInput" placeholder="e.g. CUST-001" maxlength="12" autocomplete="off"/>
+      <p class="modal-hint">Format: CUST-XXX (e.g. CUST-001, CUST-042)</p>
+      <button class="modal-btn primary" id="customerIdSubmitBtn">Start Chat</button>
+    </div>
+  </div>
+
+  <script>
+    const customerCard = document.getElementById('customerCard');
+    const modal = document.getElementById('customerIdModal');
+    const input = document.getElementById('customerIdInput');
+    const btn = document.getElementById('customerIdSubmitBtn');
+
+    customerCard.addEventListener('click', () => {
+      modal.style.display = 'flex';
+      setTimeout(() => input.focus(), 100);
+    });
+
+    const submit = () => {
+      const raw = input.value.trim().toUpperCase();
+      if (!/^CUST-\d{3}$/.test(raw)) {
+        input.style.borderColor = 'var(--error)';
+        input.placeholder = 'Invalid format — try CUST-001';
+        return;
+      }
+      // Navigate to chat with customer ID as query param
+      window.location.href = `/chat?cid=${encodeURIComponent(raw)}`;
+    };
+
+    btn.addEventListener('click', submit);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+  </script>
+</body>
+</html>
