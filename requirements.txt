@@ -11,3 +11,4 @@ langgraph>=0.2.0
 # Use slim + openai extra to avoid temporalio (needs Rust/protobuf to build)
 pydantic-ai-slim[openai]>=0.2.0
 chromadb>=0.5.0
+python-json-logger>=2.0.0
