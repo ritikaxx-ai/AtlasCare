@@ -1,6 +1,6 @@
 {
   "description": "Synthetic CRM past interaction summaries for RAG retrieval",
-  "count": 707,
+  "count": 717,
   "interactions": [
     {
       "interaction_id": "INT-PRIYA-001",
@@ -9751,6 +9751,137 @@
         "cancellation",
         "refund_inquiry",
         "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-02CCC70C",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T05:19:19.029284+00:00",
+      "summary": "Here's a summary of our policies:  Return Window Policy: Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full refund regardless",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779686349910.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-11DF3AD7",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T05:19:34.519249+00:00",
+      "summary": "Here's a summary of our policies:  Refund Policy and Threshold Rules: Acme Retail processes refunds automatically for amounts up to Rs.25,000 via the Payments Gateway. Refund requests exceeding Rs.25,",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779686349910.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-99714C87",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T05:19:46.034930+00:00",
+      "summary": "Here's a summary of our policies:  Supported Payment Methods: Acme Retail supports the following payment methods: UPI, HDFC Credit Card, ICICI Debit Card, SBI Credit Card, and Cash on Delivery (COD). ",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779686349910.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-B723269D",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T05:20:53.081469+00:00",
+      "summary": "Here's a summary of our policies:  Refund Policy and Threshold Rules: Acme Retail processes refunds automatically for amounts up to Rs.25,000 via the Payments Gateway. Refund requests exceeding Rs.25,",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779686349910.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-E0D559D6",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T05:27:31.559261+00:00",
+      "summary": "Here's a summary of our policies:  Refund Policy and Threshold Rules: Acme Retail processes refunds automatically for amounts up to Rs.25,000 via the Payments Gateway. Refund requests exceeding Rs.25,",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779686847283.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-A7BBFAD1",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T06:04:48.530673+00:00",
+      "summary": "Partial Cancellation and Reshipping: Customers can cancel individual line items from an order. The remainder of the order will be shipped normally. Customers may also update their shipping address for",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779689085323.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-3BC5456B",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T06:04:56.995603+00:00",
+      "summary": "Here's a summary of our policies:  Order Tracking and Shipping SLAs: Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is assigned and th",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779689085323.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-53CD21F3",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T06:05:04.865554+00:00",
+      "summary": "Here's a summary of our policies:  Refund Policy and Threshold Rules: Acme Retail processes refunds automatically for amounts up to Rs.25,000 via the Payments Gateway. Refund requests exceeding Rs.25,",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779689085323.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-E539FC15",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T06:08:53.534048+00:00",
+      "summary": "Here is a summary of our relevant policies:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is assign",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779689330389.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-4FDF60B5",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T06:09:08.768658+00:00",
+      "summary": "Order ORD-78321 — Status: SHIPPED Tracking number: TRACK-7X9K2M Estimated delivery: 2025-05-08  Is there anything else I can help you with?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779689330389.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
       ]
     }
   ]

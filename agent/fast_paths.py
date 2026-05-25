@@ -227,6 +227,8 @@ def _kb_tags_for_message(message: str) -> list[str]:
         return ["address_change", "in_transit"]
     if "cancel" in msg and "partial" in msg:
         return ["cancellation", "partial"]
+    if "cancel" in msg:
+        return ["cancellation"]
     if "track" in msg or "shipping" in msg or "delivery" in msg:
         return ["tracking", "shipping", "delivery"]
     if "payment" in msg or "upi" in msg or "credit" in msg or "debit" in msg:
@@ -623,8 +625,8 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
     """
     if not trace.tool_calls:
         return (
-            "I wasn't able to complete your request. "
-            "A support specialist will follow up shortly."
+            "I wasn't able to complete your request.\n"
+            "A support specialist will follow up with you shortly."
         )
 
     parts: list[str] = []
@@ -632,7 +634,7 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
     for call in trace.tool_calls:
         if not call.success:
             parts.append(
-                "We encountered an issue processing part of your request. "
+                "We encountered an issue processing part of your request.\n"
                 "Our team is looking into it and will contact you soon."
             )
             continue
@@ -640,89 +642,91 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
         out = call.output
         name = call.tool_name
 
+        # ── J1: Order tracking ────────────────────────────────────────────
         if name == "get_order_status":
             order_id = out.get("order_id", "your order")
             if out.get("not_found"):
                 parts.append(
-                    f"I couldn't find order **{order_id}** in our system. "
-                    f"Please double-check the order number. "
-                    f"If you believe this is an error, please contact our support team with your registered email or phone number."
+                    f"I couldn't find order {order_id} in our system.\n"
+                    f"Please double-check the order number.\n"
+                    f"If you believe this is an error, contact our support team with your registered email or phone number."
                 )
                 continue
             status = out.get("status", "unknown")
             # J2 ineligible — order already delivered or cancelled
             if journey_type == "J2" and status == "delivered":
                 parts.append(
-                    f"Order **{order_id}** has already been **delivered** and is no longer eligible for cancellation or modification. "
-                    f"If you received a damaged or incorrect item, you can raise a return or refund request within **30 days of delivery**."
+                    f"Order {order_id} has already been delivered and is no longer eligible for cancellation or modification.\n"
+                    f"If you received a damaged or incorrect item, you can raise a return or refund request within 30 days of delivery."
                 )
                 continue
             if journey_type == "J2" and status == "cancelled":
                 parts.append(
-                    f"Order **{order_id}** has already been **cancelled**. "
-                    f"If a refund is pending, it will be credited to your original payment method within **3–5 business days**. "
+                    f"Order {order_id} has already been cancelled.\n"
+                    f"If a refund is pending, it will be credited to your original payment method within 3–5 business days.\n"
                     f"Feel free to place a new order if needed."
                 )
                 continue
-            parts.append(f"Your order **{order_id}** is currently **{status}**.")
-            # Only show tracking/delivery info for active (non-terminal) orders
+            lines = [f"Order {order_id} — Status: {status.upper()}"]
             if status not in ("cancelled", "delivered"):
                 if out.get("tracking_number"):
-                    parts.append(f"Tracking number: **{out['tracking_number']}**.")
+                    lines.append(f"Tracking number: {out['tracking_number']}")
                 if out.get("estimated_delivery"):
-                    parts.append(f"Estimated delivery: **{out['estimated_delivery']}**.")
+                    lines.append(f"Estimated delivery: {out['estimated_delivery']}")
+            parts.append("\n".join(lines))
 
+        # ── Clarification sentinels ───────────────────────────────────────
         elif name == "clarify_order_id":
             parts.append(
-                "I'd be happy to help with your return or refund request. "
-                "Could you please share your **order ID** (e.g. ORD-78321) so I can look it up?"
+                "I'd be happy to help with your request.\n"
+                "Could you please share your order ID (e.g. ORD-78321) so I can look it up?"
             )
 
         elif name == "blocked_injection":
             parts.append(
-                "I'm sorry, I wasn't able to process that message. "
+                "I wasn't able to process that message.\n"
                 "Please rephrase your request and I'll be happy to help."
             )
 
         elif name == "clarify_customer_id":
             parts.append(
-                "I'd be happy to pull up your support history! "
-                "It looks like I don't have your account details in this session. "
-                "Could you please **log in** or share your **customer ID** (e.g. CUST-001) so I can look up your previous interactions?"
+                "I'd be happy to pull up your support history.\n"
+                "It looks like I don't have your account details in this session.\n"
+                "Could you please log in or share your customer ID (e.g. CUST-001) so I can look up your previous interactions?"
             )
 
         elif name == "unauthorized_order_access":
             order_id = out.get("order_id", "that order")
             parts.append(
-                f"I'm sorry, but order **{order_id}** is not associated with your account. "
-                f"Please verify your order ID and try again. "
+                f"Order {order_id} is not associated with your account.\n"
+                f"Please verify the order ID and try again.\n"
                 f"If you believe this is an error, contact our support team."
             )
 
+        # ── J2: Cancellation ─────────────────────────────────────────────
         elif name == "cancel_full_order":
             order_id = out.get("order_id", "your order")
             cancelled_count = out.get("cancelled_count", 0)
             if cancelled_count == 0:
-                parts.append(
-                    f"Order **{order_id}** has no active items to cancel."
-                )
+                parts.append(f"Order {order_id} has no active items to cancel.")
             else:
                 parts.append(
-                    f"Order **{order_id}** has been fully cancelled "
-                    f"({cancelled_count} item(s) cancelled)."
+                    f"Order {order_id} has been fully cancelled.\n"
+                    f"{cancelled_count} item(s) have been marked as cancelled."
                 )
 
         elif name == "cancel_order_item":
+            order_id = out.get("order_id", "")
+            line_id = out.get("line_id", "")
             if out.get("already_cancelled"):
                 parts.append(
-                    f"Item **{out.get('line_id')}** on order **{out.get('order_id', '')}** "
-                    f"is already cancelled. No further action is needed."
+                    f"Item {line_id} on order {order_id} was already cancelled.\n"
+                    f"No further action is needed."
                 )
             else:
-                parts.append(
-                    f"Item on order **{out.get('order_id', '')}** has been cancelled successfully."
-                )
+                parts.append(f"Item {line_id} on order {order_id} has been cancelled successfully.")
 
+        # ── J2: Refund ───────────────────────────────────────────────────
         elif name == "execute_refund":
             amt = (
                 out.get("amount_inr")
@@ -733,85 +737,90 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             sla = out.get("sla_days", 5)
             if amt is not None:
                 parts.append(
-                    f"A refund of **₹{float(amt):,.0f}** has been initiated to **{method}**. "
-                    f"Please allow up to **{sla} business days** for it to appear."
+                    f"Refund initiated successfully.\n"
+                    f"Amount: Rs.{float(amt):,.0f}\n"
+                    f"Payment method: {method}\n"
+                    f"Please allow up to {sla} business days for it to reflect."
                 )
             else:
                 parts.append("Your refund has been initiated successfully.")
 
+        # ── J2: Address update ───────────────────────────────────────────
         elif name == "address_clarification_needed":
             order_id = out.get("order_id", "your order")
             labels = out.get("available_labels", [])
             if labels:
-                options = " or ".join(f'**"{l}"**' for l in labels)
+                options = ", ".join(f'"{l}"' for l in labels)
                 parts.append(
-                    f"I'd be happy to update the shipping address for order **{order_id}**. "
-                    f"You have the following saved addresses: {options}. "
-                    f"Which one would you like to ship to? "
-                    f"Or feel free to type out a new address directly."
+                    f"I'd be happy to update the shipping address for order {order_id}.\n"
+                    f"Your saved addresses are: {options}.\n"
+                    f"Which one would you like to use? Or type out a new address directly."
                 )
             else:
                 parts.append(
-                    f"I'd be happy to update the shipping address for order **{order_id}**. "
-                    f"Could you please provide the new delivery address "
-                    f"(street, city, state, and pincode)?"
+                    f"I'd be happy to update the shipping address for order {order_id}.\n"
+                    f"Please provide the new delivery address including street, city, state, and pincode."
                 )
 
         elif name == "update_shipping_address":
+            order_id = out.get("order_id", "")
             out_addr = out.get("shipping_address", {})
-            addr_str = ", ".join(filter(None, [
+            addr_parts = [
                 out_addr.get("line1"), out_addr.get("line2"),
                 out_addr.get("city"), out_addr.get("state"), out_addr.get("pincode")
-            ])) if out_addr else ""
-            parts.append(
-                f"The shipping address for order **{out.get('order_id', '')}** "
-                f"has been updated successfully."
-                + (f" New address: **{addr_str}**." if addr_str else "")
-            )
+            ]
+            addr_str = ", ".join(filter(None, addr_parts)) if out_addr else ""
+            lines = [f"Shipping address for order {order_id} has been updated successfully."]
+            if addr_str:
+                lines.append(f"New address: {addr_str}")
+            parts.append("\n".join(lines))
 
+        # ── J3 / J2 high-value: CRM escalation ──────────────────────────
         elif name == "create_crm_case":
             case_id = out.get("case_id", "your case")
             amount = out.get("amount_inr") or out.get("amount_refunded")
-            if journey_type == "J2" and amount and float(amount) > 25000:
+            if amount and float(amount) > 25000:
                 parts.append(
-                    f"Your refund of **₹{float(amount):,.0f}** exceeds our automated limit of **₹25,000**. "
-                    f"I've raised a specialist case **{case_id}** for manual review. "
-                    f"A team member will process this within our **24-hour SLA**."
+                    f"Your refund request of Rs.{float(amount):,.0f} exceeds our automated processing limit of Rs.25,000.\n"
+                    f"A specialist case has been raised for manual review.\n"
+                    f"Case reference: {case_id}\n"
+                    f"A team member will process this within the 24-hour SLA."
                 )
             else:
                 parts.append(
-                    f"I've escalated your request to a specialist. "
-                    f"Case reference: **{case_id}**. "
-                    f"A team member will review this within our **24-hour SLA**."
+                    f"Your request has been escalated to a specialist.\n"
+                    f"Case reference: {case_id}\n"
+                    f"A team member will review this within the 24-hour SLA."
                 )
 
-        elif name == "get_customer_profile":
-            pass  # intermediate step — covered by update_shipping
+        elif name in ("get_customer_profile", "get_customer_address"):
+            pass  # intermediate steps — output covered by update_shipping_address
 
-        elif name == "get_customer_address":
-            pass
-
+        # ── J-KB: Policy lookup ──────────────────────────────────────────
         elif name == "search_kb":
             articles = out.get("articles", [])
             if articles:
                 if len(articles) == 1:
                     article = articles[0]
                     parts.append(
-                        f"**{article.get('title', 'Policy')}**: {article.get('content', '')}"
+                        f"{article.get('title', 'Policy')}\n\n"
+                        f"{article.get('content', '')}"
                     )
                 else:
-                    parts.append("Here's a summary of our policies:\n")
+                    section_lines = ["Here is a summary of our relevant policies:\n"]
                     for article in articles:
-                        parts.append(
-                            f"**{article.get('title', 'Policy')}**: {article.get('content', '')}"
-                        )
+                        section_lines.append(f"{article.get('title', 'Policy')}")
+                        section_lines.append(f"{article.get('content', '')}")
+                        section_lines.append("")  # blank line between articles
+                    parts.append("\n".join(section_lines).rstrip())
 
+        # ── J5: Case status ──────────────────────────────────────────────
         elif name == "get_case_status":
             if out.get("not_found"):
                 cid = out.get("case_id", "that case")
                 parts.append(
-                    f"I couldn't find case **{cid}** in our system. "
-                    f"Please double-check the case ID and try again. "
+                    f"I couldn't find case {cid} in our system.\n"
+                    f"Please double-check the case ID and try again.\n"
                     f"If you need help locating your case number, I can look it up from your order details."
                 )
                 continue
@@ -821,53 +830,61 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             description = out.get("description", "")
             created_at = (out.get("created_at") or "")[:10]
             amount = out.get("amount_inr")
-            status_msg = {
-                "open": "is currently **open** and under review by our specialist team",
-                "resolved": "has been **resolved**",
-                "closed": "has been **closed**",
-            }.get(status, f"is **{status}**")
-            parts.append(f"Case **{case_id}** {status_msg}.")
-            if description:
-                parts.append(f"Details: {description}")
-            if amount:
-                parts.append(f"Amount: **₹{float(amount):,.0f}**.")
+            status_label = {
+                "open": "Open — under review by our specialist team",
+                "resolved": "Resolved",
+                "closed": "Closed",
+            }.get(status, status.capitalize())
+            lines = [
+                f"Case {case_id}",
+                f"Status: {status_label}",
+            ]
             if created_at:
-                parts.append(f"Opened on: **{created_at}**.")
+                lines.append(f"Opened on: {created_at}")
+            if amount:
+                lines.append(f"Amount: Rs.{float(amount):,.0f}")
+            if description:
+                lines.append(f"Details: {description}")
             if priority == "high" and status == "open":
-                parts.append("Our team will respond within the **24-hour SLA**.")
+                lines.append("Our team will respond within the 24-hour SLA.")
+            parts.append("\n".join(lines))
 
+        # ── J4: Customer history ─────────────────────────────────────────
         elif name == "get_customer_interaction_history":
             interactions = out.get("interactions", [])
             if interactions:
-                parts.append(
-                    "I found your recent support history. Here's what I see:"
-                )
+                lines = ["Here is your recent support history:\n"]
                 for i, interaction in enumerate(interactions, 1):
                     ts = interaction.get("timestamp", "")[:10]
                     summary = interaction.get("summary", "No summary")
                     resolution = interaction.get("resolution", "unknown")
-                    parts.append(
-                        f"{i}. ({ts}, {resolution}) {summary}"
-                    )
+                    lines.append(f"{i}. Date: {ts}  |  Resolution: {resolution}")
+                    lines.append(f"   {summary}")
+                    lines.append("")  # spacing between entries
+                parts.append("\n".join(lines).rstrip())
                 parts.append(
-                    "I understand this is a recurring concern — I'll make sure we address it with full context from your prior interactions."
+                    "I understand this is a recurring concern — I'll ensure it's addressed with full context from your prior interactions."
                 )
             else:
                 parts.append(
-                    "I don't see prior interaction records matching your query, "
-                    "but I'm here to help resolve this now."
+                    "I don't see any prior interaction records matching your query.\n"
+                    "I'm here to help — please describe your issue and I'll resolve it now."
                 )
 
     if not parts:
-        return "Your request has been processed. Let me know if you need anything else."
+        return "Your request has been processed.\nLet me know if there's anything else I can help with."
 
     closing = {
         "J1": "Is there anything else I can help you with?",
-        "J2": "All requested changes are complete. Anything else?",
-        "J3": "Thank you for your patience.",
+        "J2": "All requested changes are complete. Let me know if you need anything else.",
+        "J3": "Thank you for your patience. We will get back to you shortly.",
         "J4": "How can I help you resolve this today?",
         "J5": "Is there anything else I can help you with?",
-        "J-KB": "Let me know if you need anything else about our policies.",
+        "J-KB": "Let me know if you have any other questions about our policies.",
     }.get(journey_type, "")
 
-    return " ".join(parts) + (f" {closing}" if closing else "")
+    # Join blocks with a blank line between each for clear visual separation
+    response = "\n\n".join(parts)
+    if closing:
+        response += f"\n\n{closing}"
+    return response

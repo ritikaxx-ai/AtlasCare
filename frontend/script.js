@@ -71,6 +71,8 @@ const _CONFIRM_KEYWORDS = ['cancel'];
 
 function needsConfirmation(message) {
   const lower = message.toLowerCase();
+  // Policy-lookup prompts should never trigger the confirmation modal
+  if (lower.startsWith('check policy')) return false;
   return _CONFIRM_KEYWORDS.some(k => lower.includes(k));
 }
 
@@ -398,7 +400,9 @@ function addMessageToChat(text, type, streaming = false) {
 function renderMarkdown(text) {
   return text
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    // double newline → paragraph break with spacing
+    .replace(/\n\n/g, '<br><br>')
+    // single newline → line break
     .replace(/\n/g, '<br>');
 }
 
