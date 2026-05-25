@@ -116,14 +116,32 @@ class address_clarification_needed(TracedTool):
 
 
 class update_shipping_address(TracedTool):
-    """Update shipping address using in-memory cache."""
+    """Update shipping address using a saved address label OR a full address dict.
 
-    def _execute(self, order_id: str, address: Dict[str, Any], **kwargs) -> Dict[str, Any]:
+    The LLM planner passes address_label ("home" / "office") and customer_id.
+    The tool resolves the label → dict from the data store so Gemini never has
+    to construct a nested object (which it does unreliably).
+    """
+
+    def _execute(self, order_id: str, customer_id: str = None,
+                 address_label: str = None, address: Dict[str, Any] = None,
+                 **kwargs) -> Dict[str, Any]:
         trace_id = getattr(self.trace_ctx, "trace_id", "unknown")
+        data_store = get_data_store()
+
+        # Resolve address: prefer label lookup (LLM path), fall back to raw dict (fast-path)
+        if address_label and customer_id:
+            try:
+                address = data_store.get_customer_address(customer_id, address_label)
+            except Exception as e:
+                return {"error": f"No saved address with label '{address_label}' found for this account."}
+
+        if not address or not isinstance(address, dict):
+            return {"error": "No valid address provided. Please specify a saved address label or full address."}
+
         log.info({"event": "tool_call_start", "tool": "update_shipping_address",
                   "trace_id": trace_id, "order_id": order_id,
                   "city": address.get("city"), "pincode": address.get("pincode")})
-        data_store = get_data_store()
         result = data_store.update_shipping_address(order_id, address)
         if result.get("success"):
             log.info({"event": "address_updated", "trace_id": trace_id, "order_id": order_id})

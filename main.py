@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()  # loads GEMINI_API_KEY (and any other vars) from .env before anything else
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles

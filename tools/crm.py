@@ -35,6 +35,23 @@ class create_crm_case(TracedTool):
                  priority: str = "high", amount_inr: float = None, **kwargs) -> Dict[str, Any]:
         data_store = get_data_store()
         trace_id = getattr(self.trace_ctx, "trace_id", "unknown")
+
+        # ── Deduplication guard ──────────────────────────────────────────────
+        # If an open case already exists for this customer + order, return it
+        # instead of creating a duplicate.  Prevents double-cases when the user
+        # submits the same request twice or a retry races with itself.
+        for existing in data_store._crm.get("cases", []):
+            if (existing.get("order_id") == order_id
+                    and existing.get("customer_id") == customer_id
+                    and existing.get("status") == "open"):
+                log.info({
+                    "event": "crm_case_deduplicated",
+                    "trace_id": trace_id,
+                    "existing_case_id": existing["case_id"],
+                    "order_id": order_id,
+                })
+                return {**existing, "deduplicated": True}
+
         case_id = f"CASE-{uuid.uuid4().hex[:6].upper()}"
 
         new_case = {

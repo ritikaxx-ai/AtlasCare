@@ -486,8 +486,8 @@ def try_build_j2_plan(
     elif any(k in msg for k in ("office", "home", "work", "ship", "address")):
         # --- Standalone address update (no cancel/refund) ---
         cid = order.get("customer_id") or extract_customer_id_from_order(order_id)
-        address = resolve_address(cid, msg)
-        if not address:
+        label = extract_address_label(msg)
+        if not label or not resolve_address(cid, msg):
             # No saved address matched — ask the customer to specify
             return ExecutionPlan(steps=[
                 PlanStep(
@@ -502,7 +502,7 @@ def try_build_j2_plan(
         return ExecutionPlan(steps=[
             PlanStep(
                 tool="update_shipping_address",
-                params={"order_id": order_id, "address": address},
+                params={"order_id": order_id, "customer_id": cid, "address_label": label},
             )
         ])
 
@@ -515,12 +515,12 @@ def try_build_j2_plan(
     # Append address update if cancel/refund AND address change both requested
     if any(k in msg for k in ("office", "home", "work", "ship", "address")):
         cid = order.get("customer_id") or extract_customer_id_from_order(order_id)
-        address = resolve_address(cid, msg)
-        if address:
+        label = extract_address_label(msg)
+        if label and resolve_address(cid, msg):
             steps.append(
                 PlanStep(
                     tool="update_shipping_address",
-                    params={"order_id": order_id, "address": address},
+                    params={"order_id": order_id, "customer_id": cid, "address_label": label},
                 )
             )
         else:
@@ -735,8 +735,9 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
                 )
 
         elif name == "cancel_order_item":
-            order_id = out.get("order_id", "your order")
-            line_id = out.get("line_id", "")
+            order_id = out.get("order_id", call.input.get("order_id", "your order"))
+            # line_id lives in the tool input (output is the raw order dict, not a line summary)
+            line_id = call.input.get("line_id", out.get("line_id", ""))
             if out.get("already_cancelled"):
                 parts.append(
                     f"It looks like item {line_id} on order {order_id} was already cancelled previously.\n"
@@ -771,18 +772,27 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
         # ── J2: Address update ───────────────────────────────────────────
         elif name == "address_clarification_needed":
             order_id = out.get("order_id", "your order")
-            labels = out.get("available_labels", [])
+            raw_labels = out.get("available_labels", [])
+            # Guard: Gemini sometimes passes a plain string instead of a list.
+            # Wrap it so the join below never iterates characters.
+            if isinstance(raw_labels, str):
+                labels = [raw_labels] if raw_labels else []
+            else:
+                labels = [l for l in raw_labels if l]  # filter out empty/None
+
             if labels:
-                options = ", ".join(f'"{l}"' for l in labels)
+                options = " or ".join(f'"{l}"' for l in labels)
                 parts.append(
                     f"Sure, I can update the delivery address for order {order_id}!\n"
-                    f"I found the following saved addresses on your account: {options}.\n"
-                    f"Which one would you like to use? Or if you'd prefer a different address, just type it out and I'll update it."
+                    f"I found these saved addresses on your account: {options}.\n"
+                    f"Which one would you like to use? Or just type out the new address and I'll update it straight away."
                 )
             else:
+                # No saved addresses on file — ask the customer to provide one
                 parts.append(
                     f"Sure, I can update the delivery address for order {order_id}!\n"
-                    f"Please share the new address (including street, city, state, and pincode) and I'll get it updated right away."
+                    f"I don't see any saved addresses on your account yet.\n"
+                    f"Please share the full new address (street, city, state, and pincode) and I'll get it updated right away."
                 )
 
         elif name == "update_shipping_address":
@@ -802,7 +812,16 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
         elif name == "create_crm_case":
             case_id = out.get("case_id", "your case")
             amount = out.get("amount_inr") or out.get("amount_refunded")
-            if amount and float(amount) > 25000:
+            is_duplicate = out.get("deduplicated", False)
+
+            if is_duplicate:
+                # Case already existed — reassure the customer without creating confusion
+                parts.append(
+                    f"It looks like a case is already open for this request — your reference number is {case_id}.\n"
+                    f"Our team is already on it and will get back to you within 24 hours.\n"
+                    f"No need to raise another case."
+                )
+            elif amount and float(amount) > 25000:
                 parts.append(
                     f"I completely understand how important this is, and I want to make sure it's handled properly.\n"
                     f"Since the refund amount of Rs.{float(amount):,.0f} is above our automated processing limit of Rs.25,000, "

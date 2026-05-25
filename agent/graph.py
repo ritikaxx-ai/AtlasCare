@@ -230,20 +230,28 @@ async def _llm_plan_node(state: AgentState) -> AgentState:
     if order_id:
         order = get_data_store().get_order(order_id)
         if order:
-            # Fetch office address for the customer (best-effort)
+            # Fetch all saved addresses for the customer (best-effort).
+            # Pass both home and office so Gemini can pick the right one.
+            cid = order.get("customer_id") or state.get("customer_id")
+            home_address = None
             office_address = None
-            try:
-                cid = order.get("customer_id") or state.get("customer_id")
-                if cid:
-                    office_address = get_data_store().get_customer_address(cid, "office")
-            except Exception:
-                pass
+            if cid:
+                for label, key in [("home", "home_address"), ("office", "office_address")]:
+                    try:
+                        addr = get_data_store().get_customer_address(cid, label)
+                        if label == "home":
+                            home_address = addr
+                        else:
+                            office_address = addr
+                    except Exception:
+                        pass
 
             order_context = {
                 "order_id": order_id,
                 "status": order.get("status"),
                 "payment_method": order.get("payment_method", "original"),
                 "customer_id": order.get("customer_id"),
+                "home_address": home_address,
                 "office_address": office_address,
                 "items": [
                     {

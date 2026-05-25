@@ -841,6 +841,61 @@
       "amount_inr": 55000.0,
       "trace_id": "trc-5e45a0e9",
       "created_at": "2026-05-25T09:27:07.054285+00:00"
+    },
+    {
+      "case_id": "CASE-BA5FEA",
+      "customer_id": "CUST-004",
+      "order_id": "ORD-78705",
+      "status": "open",
+      "priority": "high",
+      "description": "Refund amount for item cancellation exceeds 25000.",
+      "amount_inr": 59900,
+      "trace_id": "trc-985b0a5d",
+      "created_at": "2026-05-25T10:56:30.313513+00:00"
+    },
+    {
+      "case_id": "CASE-33A8CA",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "medium",
+      "description": "Customer wants to cancel item 2, but it is already cancelled.",
+      "amount_inr": null,
+      "trace_id": "trc-79984db8",
+      "created_at": "2026-05-25T11:18:45.913158+00:00"
+    },
+    {
+      "case_id": "CASE-9671E5",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "medium",
+      "description": "Customer attempted to cancel an item that is already cancelled.",
+      "amount_inr": null,
+      "trace_id": "trc-89e81b54",
+      "created_at": "2026-05-25T11:24:46.376039+00:00"
+    },
+    {
+      "case_id": "CASE-238D80",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer wants to cancel line item 1. Refund amount exceeds 25000 INR.",
+      "amount_inr": 55000,
+      "trace_id": "trc-b0581243",
+      "created_at": "2026-05-25T11:37:14.495180+00:00"
+    },
+    {
+      "case_id": "CASE-D27B6B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested cancellation of item 1 with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-8f4fddc7",
+      "created_at": "2026-05-25T11:38:02.795091+00:00"
     }
   ]
 }
