@@ -16,10 +16,12 @@ _HISTORY_PATH = os.path.join(_DATA_DIR, "crm_interaction_history.json")
 _CHROMA_PATH = os.path.join(_DATA_DIR, "chroma_db")
 _COLLECTION_NAME = "crm_interactions"
 
+# Module-level singletons — initialised lazily on first call to _get_chroma_collection().
+# _chroma_available is None (not yet checked), True (working), or False (unavailable).
 _lock = threading.Lock()
 _chroma_collection = None
 _chroma_available: Optional[bool] = None
-_json_cache: Optional[list] = None
+_json_cache: Optional[list] = None  # in-memory cache of crm_interaction_history.json
 
 
 def _load_interactions_json() -> list:
@@ -35,6 +37,8 @@ def _load_interactions_json() -> list:
 
 
 def _interaction_document(interaction: dict) -> str:
+    # Converts a CRM interaction dict into a single string that ChromaDB embeds.
+    # All meaningful fields are concatenated so semantic search can find relevant history.
     tags = ", ".join(interaction.get("tags", []))
     return (
         f"Channel: {interaction.get('channel', 'unknown')}. "
@@ -50,7 +54,11 @@ def _tokenize(text: str) -> set:
 
 
 def _search_fallback(customer_id: str, query: str, top_k: int) -> List[dict]:
-    """Keyword overlap RAG fallback when ChromaDB is unavailable."""
+    """
+    Keyword overlap RAG used when ChromaDB isn't available (e.g. CI, fresh install).
+    Tokenises both the query and each interaction document, scores by overlap ratio,
+    and returns the top_k matches filtered to this customer.
+    """
     query_tokens = _tokenize(query)
     if not query_tokens:
         return []
@@ -84,6 +92,14 @@ def _search_fallback(customer_id: str, query: str, top_k: int) -> List[dict]:
 
 
 def _get_chroma_collection():
+    """
+    Lazy initialiser for the ChromaDB collection. Thread-safe via _lock.
+    On first call: creates a persistent ChromaDB client at data/chroma_db/,
+    gets-or-creates the collection with ONNX MiniLM embeddings (cosine space),
+    and bulk-indexes all existing interactions if the collection is empty.
+    Returns None (and sets _chroma_available=False) if chromadb is not installed
+    or any init error occurs — callers fall back to _search_fallback silently.
+    """
     global _chroma_collection, _chroma_available
 
     if _chroma_available is False:

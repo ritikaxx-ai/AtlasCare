@@ -43,6 +43,11 @@ from schemas.plan import ExecutionPlan, PlanStep
 from schemas.trace import TraceContext
 
 
+# ─── Node 1: Guardrail ───────────────────────────────────────────────────────
+# First node every message hits. Runs two checks in order:
+#   a) Prompt injection scan — if matched, sets action=INJECTION and returns immediately.
+#   b) High-value refund check — if amount > ₹25K and refund intent, sets action=ESCALATE.
+# The guardrail result is stored in state["guardrail"] for the router to act on.
 def _guardrail_node(state: AgentState) -> AgentState:
     message = state["message"]
     trace_id = state["trace_id"]
@@ -107,6 +112,11 @@ def _guardrail_node(state: AgentState) -> AgentState:
     return state
 
 
+# ─── Node 2: Router ──────────────────────────────────────────────────────────
+# Classifies the message into a journey type (J1–J5, J-KB) and resolves any order/case
+# IDs from session memory (so "cancel it" works without repeating the order ID).
+# Also decides whether to use the LLM planner (use_llm_plan=True) or the fast path.
+# Currently use_llm_plan is always False because the deterministic planner handles all cases.
 def _router_node(state: AgentState) -> AgentState:
     action = state["guardrail"]["action"]
     session_id = state["session_id"]
@@ -141,10 +151,17 @@ def _router_node(state: AgentState) -> AgentState:
     return state
 
 
+# Conditional edge function: LangGraph calls this after the router to decide
+# which planning node to execute next. Returns "fast_plan" or "llm_plan".
 def _route_after_router(state: AgentState) -> Literal["fast_plan", "llm_plan"]:
     return "llm_plan" if state.get("use_llm_plan") else "fast_plan"
 
 
+# ─── Node 3a: Fast Plan ──────────────────────────────────────────────────────
+# Deterministic planner — no LLM call, zero extra latency.
+# Reads the journey_type set by the router and calls the matching build_jN_plan()
+# function from fast_paths.py. Each function returns an ExecutionPlan (a list of
+# tool steps). The plan is serialised into state["plan"] for the executor.
 def _fast_plan_node(state: AgentState) -> AgentState:
     journey = state["journey_type"]
     resolved_order_id = state.get("resolved_order_id")
@@ -193,6 +210,10 @@ def _fast_plan_node(state: AgentState) -> AgentState:
     return state
 
 
+# ─── Node 3b: LLM Plan ───────────────────────────────────────────────────────
+# Pydantic AI planner — invoked only when use_llm_plan=True (currently unused in prod).
+# Builds an order context dict, calls Gemini 2.5 Flash via generate_plan_llm(), and
+# stores the resulting ExecutionPlan in state["plan"].
 async def _llm_plan_node(state: AgentState) -> AgentState:
     from agent.cache import get_data_store
     from agent.vector_store import search_customer_history
@@ -235,6 +256,10 @@ async def _llm_plan_node(state: AgentState) -> AgentState:
     return state
 
 
+# ─── Node 4: Executor ────────────────────────────────────────────────────────
+# Runs every step in the ExecutionPlan sequentially.
+# Creates a fresh TraceContext, passes it to the Executor, then serialises
+# the completed trace (tool names, inputs, outputs, latencies) into state["trace"].
 def _executor_node(state: AgentState) -> AgentState:
     trace = TraceContext(
         trace_id=state["trace_id"],
@@ -247,6 +272,10 @@ def _executor_node(state: AgentState) -> AgentState:
     return state
 
 
+# ─── Node 5: Synthesize ──────────────────────────────────────────────────────
+# Converts the trace (raw tool outputs) into a natural-language response using
+# templates in synthesize_from_trace(). No LLM call — the text is assembled from
+# static strings and the actual data returned by each tool.
 def _synthesize_node(state: AgentState) -> AgentState:
     trace = TraceContext(**state["trace"])
     state["response"] = synthesize_from_trace(

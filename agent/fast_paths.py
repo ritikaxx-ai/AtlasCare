@@ -1,5 +1,24 @@
 """
-Deterministic fast paths — zero LLM latency for J1/J3 and template synthesis for all journeys.
+agent/fast_paths.py — deterministic planning and template-based response synthesis.
+
+This file does two separate jobs:
+
+1. PLANNING (build_jN_plan / try_build_j2_plan / classify_journey_for_routing)
+   Each "build" function constructs an ExecutionPlan — a list of tool steps —
+   without calling any LLM. The router picks the right builder based on journey type.
+
+2. SYNTHESIS (synthesize_from_trace)
+   After the executor runs all tools, this function turns the raw tool outputs
+   into a customer-friendly text response using static templates.
+   It never calls an LLM; all data comes directly from tool outputs stored in the trace.
+
+Journey types and their builders:
+  J1  → build_j1_plan    — order tracking (get_order_status)
+  J2  → try_build_j2_plan — cancel / refund / address update
+  J3  → build_j3_plan    — high-value escalation (create_crm_case)
+  J4  → build_j4_plan    — customer history RAG (get_customer_interaction_history)
+  J5  → build_j5_plan    — CRM case status lookup (get_case_status)
+  J-KB → build_kb_plan   — policy questions (search_kb)
 """
 import re
 from typing import Optional
@@ -237,6 +256,15 @@ def is_case_status_query(message: str) -> bool:
 def classify_journey_for_routing(
     message: str, guardrail_action: str, resolved_order_id: Optional[str] = None
 ) -> str:
+    """
+    Priority order (highest wins):
+      J3  — guardrail already flagged high-value refund
+      J5  — message contains a CASE-XXXXXX ID + status word
+      J4  — message mentions prior interactions ("I called", "follow up", etc.)
+      J-KB — policy/returns/refund-policy question (but NOT a refund action)
+      J1  — has order ID + tracking intent, no cancel/refund words
+      J2  — default for cancel/refund/address/shipping actions
+    """
     if guardrail_action == "ESCALATE":
         return "J3"
 
@@ -277,7 +305,11 @@ def classify_journey_for_routing(
 
 
 def _ownership_plan(order_id: str, customer_id: Optional[str]) -> Optional[ExecutionPlan]:
-    """Return an unauthorized plan if customer_id doesn't own the order, else None."""
+    """
+    Cross-customer access guard. Returns a plan that renders an "unauthorized" message
+    if the logged-in customer doesn't own this order. Called at the start of J1, J2, J5.
+    Returns None (no restriction) if customer_id is missing (unauthenticated API call).
+    """
     if not customer_id:
         return None  # No session customer → no restriction (e.g. API calls without login)
     order = get_data_store().get_order(order_id)
@@ -310,12 +342,18 @@ def try_build_j2_plan(
     resolved_order_id: Optional[str] = None,
 ) -> Optional[ExecutionPlan]:
     """
-    Deterministic J2 planner for compound cancel/refund/ship patterns.
-    Avoids LLM latency and quota limits for known hackathon/demo flows.
+    Deterministic J2 planner. Covers four sub-cases by reading keywords:
 
-    Args:
-        message: Customer message
-        customer_id: Authenticated customer ID from session (for ownership validation)
+      • "item N" + cancel → cancel_order_item + execute_refund for that line
+      • "cancel" (no item) → cancel_full_order + execute_refund for all active items
+      • address keyword only → update_shipping_address (or ask for clarification)
+      • cancel/refund + address keyword → cancel + refund + update_shipping_address
+
+    Two guardrail checks inside:
+      - If refund amount > ₹25K, escalate to a CRM case (create_crm_case) instead.
+      - If order is already delivered/cancelled, surface status so synthesis can explain.
+
+    Returns None when the intent can't be determined (caller falls back to clarify_order_id).
     """
     msg = message.lower()
     has_cancel = "cancel" in msg
@@ -573,7 +611,16 @@ def build_j3_plan(
 
 
 def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) -> str:
-    """Template-based synthesis — no LLM call, grounded in tool outputs."""
+    """
+    Turns raw tool outputs into a customer-facing text response. No LLM — pure templates.
+
+    Iterates over every ToolCallRecord in the trace in execution order.
+    For each tool name there is a dedicated branch that reads the specific output keys
+    that tool returns (e.g. "status", "cancelled_count", "amount_inr") and formats
+    them into a sentence. Unrecognised tool names are silently skipped.
+
+    A journey-specific closing line is appended at the end (e.g. "Anything else?" for J2).
+    """
     if not trace.tool_calls:
         return (
             "I wasn't able to complete your request. "

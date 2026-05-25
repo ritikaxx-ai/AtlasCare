@@ -1,3 +1,14 @@
+"""
+tools/oms.py — Order Management System tools.
+
+Each class is a TracedTool subclass. The Executor instantiates them by name and
+calls them with the params from the ExecutionPlan. Every call is automatically
+timed and recorded in the TraceContext by TracedTool.__call__.
+
+Sentinel tools (unauthorized_order_access, clarify_order_id, blocked_injection, etc.)
+have no real side effects — they exist only so synthesize_from_trace can match their
+tool_name and render the appropriate canned message.
+"""
 from typing import Any, Dict
 from .base import TracedTool
 from agent.cache import get_data_store

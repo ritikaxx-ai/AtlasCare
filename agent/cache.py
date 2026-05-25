@@ -1,6 +1,11 @@
 """
-In-Memory Data Store for AtlasCare
-Replaces file I/O with cached lookups for sub-millisecond performance
+agent/cache.py — singleton in-memory data store.
+
+All JSON files under data/ are loaded once at startup into Python dicts/lists.
+Every tool read is an O(1) dict lookup (no file I/O on the hot path).
+Writes update the in-memory state AND call _persist_*() to flush back to disk.
+_persist_orders() merges the in-memory state with the on-disk file so that
+records added by external processes are not clobbered.
 """
 
 import json
@@ -10,11 +15,12 @@ import threading
 
 
 class DataStore:
-    """Singleton in-memory data store with thread-safe operations"""
-    
+    # Implemented as a classic double-checked-locking singleton so that every module
+    # that calls get_data_store() gets the same instance (and the same loaded data).
+
     _instance = None
     _lock = threading.Lock()
-    
+
     def __new__(cls):
         if cls._instance is None:
             with cls._lock:

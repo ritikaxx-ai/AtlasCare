@@ -1,3 +1,13 @@
+"""
+tools/base.py — base class for every tool in AtlasCare.
+
+All tools inherit TracedTool. The only method you implement in a subclass is
+_execute(**kwargs) → dict.  The __call__ wrapper handles:
+  - timing (latency_ms)
+  - exception catching (success=False)
+  - appending a ToolCallRecord to the shared TraceContext so synthesize_from_trace
+    can read every tool's output afterwards
+"""
 import time
 import json
 from datetime import datetime, timezone
@@ -7,9 +17,10 @@ from schemas.trace import TraceContext, ToolCallRecord
 class TracedTool:
     def __init__(self, trace_ctx: TraceContext):
         self.trace_ctx = trace_ctx
-        self.name = self.__class__.__name__
+        self.name = self.__class__.__name__  # used as the tool_name in trace records
 
     def __call__(self, **kwargs) -> Dict[str, Any]:
+        # This is what the Executor calls. It wraps _execute with timing + tracing.
         start = time.perf_counter()
         success = True
         result = {}

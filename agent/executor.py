@@ -1,3 +1,13 @@
+"""
+agent/executor.py — runs an ExecutionPlan step by step.
+
+The Executor holds a registry mapping tool names (strings) to TracedTool subclasses.
+run_plan() iterates the plan's steps, instantiates each tool with the shared TraceContext,
+and calls it. Because TracedTool.__call__ writes its result into the TraceContext, the
+trace is fully populated by the time run_plan() returns — the synthesizer reads it next.
+
+Fail-fast: if any tool raises, execution stops immediately (no partial-success recovery).
+"""
 from typing import Dict, Any, Type
 from schemas.plan import ExecutionPlan
 from schemas.trace import TraceContext

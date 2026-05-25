@@ -1,3 +1,12 @@
+"""
+guardrail.py — first line of defence before any message reaches the LLM or tools.
+
+Two independent checks run in sequence:
+  1. check_prompt_injection: regex scan for jailbreak / instruction-override phrases.
+     If matched the message is blocked immediately — the LLM never sees it.
+  2. check_guardrails: detects high-value refund requests (> ₹25 K) and escalates
+     them to a human specialist (J3 journey) instead of auto-processing.
+"""
 import re
 import time
 from typing import Optional
@@ -6,7 +15,8 @@ from agent.metrics import get_metrics_collector
 from agent.logger import log
 
 
-# ── Prompt injection patterns ────────────────────────────────────────────────
+# Phrases that indicate an attempt to override the system prompt or bypass safety rules.
+# Checked with a simple substring match (case-insensitive) for speed.
 _INJECTION_PATTERNS = [
     "ignore previous instructions",
     "ignore all instructions",
@@ -28,7 +38,7 @@ _INJECTION_PATTERNS = [
     "dan mode",
 ]
 
-MAX_MESSAGE_LENGTH = 2000
+MAX_MESSAGE_LENGTH = 2000  # messages longer than this are rejected upstream in main.py
 
 
 def check_prompt_injection(message: str) -> Optional[str]:
@@ -43,11 +53,12 @@ def check_prompt_injection(message: str) -> Optional[str]:
     return None
 
 
+# Simple value object returned by check_guardrails.
 class GuardrailResult:
     def __init__(self, action: str, reason: str = "", extracted_amount: float = None):
-        self.action = action  # "PASS", "ESCALATE", or "INJECTION"
-        self.reason = reason
-        self.extracted_amount = extracted_amount
+        self.action = action           # "PASS", "ESCALATE", or "INJECTION"
+        self.reason = reason           # shown in audit log and CRM case description
+        self.extracted_amount = extracted_amount  # rupee figure that triggered the rule
 
 
 def extract_currency_amount(text: str) -> Optional[float]:

@@ -1,3 +1,14 @@
+"""
+tools/payments.py — refund execution tool.
+
+Three-layer refund safety:
+  Layer 1 (guardrail.py)  — blocks > ₹25K before any planning starts
+  Layer 2 (fast_paths.py) — inside try_build_j2_plan, routes to create_crm_case instead
+  Layer 3 (here)          — hard cap inside execute_refund._execute as final backstop
+
+The actual payment call (_call_payment_gateway) is retried up to 3× on transient
+PaymentGatewayError with exponential backoff (1s → 2s → 4s).
+"""
 import random
 import uuid
 from typing import Any, Dict
