@@ -797,6 +797,50 @@
       "amount_inr": 42000.0,
       "trace_id": "trc-91b9e221",
       "created_at": "2026-05-24T15:11:53.947242+00:00"
+    },
+    {
+      "case_id": "CASE-9B5903",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-8423239e",
+      "created_at": "2026-05-25T08:32:04.539289+00:00"
+    },
+    {
+      "case_id": "CASE-21EF5E",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-840a29cc",
+      "created_at": "2026-05-25T08:38:16.627749+00:00"
+    },
+    {
+      "case_id": "CASE-B63007",
+      "customer_id": "CUST-004",
+      "order_id": "ORD-78705",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested cancellation of item 1 with refund of \u20b959,900, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 59900.0,
+      "trace_id": "trc-84a020dd",
+      "created_at": "2026-05-25T08:45:40.450602+00:00"
+    },
+    {
+      "case_id": "CASE-EFC7C7",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requested full order cancellation with refund of \u20b955,000, which exceeds the \u20b925,000 auto-refund limit. Manual review required.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-5e45a0e9",
+      "created_at": "2026-05-25T09:27:07.054285+00:00"
     }
   ]
 }

@@ -625,8 +625,8 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
     """
     if not trace.tool_calls:
         return (
-            "I wasn't able to complete your request.\n"
-            "A support specialist will follow up with you shortly."
+            "I'm sorry, I wasn't able to process your request at this time.\n"
+            "One of our support specialists will follow up with you shortly."
         )
 
     parts: list[str] = []
@@ -634,8 +634,8 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
     for call in trace.tool_calls:
         if not call.success:
             parts.append(
-                "We encountered an issue processing part of your request.\n"
-                "Our team is looking into it and will contact you soon."
+                "I'm sorry, something went wrong while processing part of your request.\n"
+                "Our team has been notified and will reach out to you soon to sort this out."
             )
             continue
 
@@ -647,60 +647,76 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             order_id = out.get("order_id", "your order")
             if out.get("not_found"):
                 parts.append(
-                    f"I couldn't find order {order_id} in our system.\n"
-                    f"Please double-check the order number.\n"
-                    f"If you believe this is an error, contact our support team with your registered email or phone number."
+                    f"I looked everywhere but couldn't find an order with the ID {order_id}.\n"
+                    f"Could you double-check the order number and try again?\n"
+                    f"If you think this is a mistake, please reach out to us with your registered email or phone number and we'll sort it out."
                 )
                 continue
+
             status = out.get("status", "unknown")
-            # J2 ineligible — order already delivered or cancelled
+
+            # J2 ineligible — order already delivered
             if journey_type == "J2" and status == "delivered":
                 parts.append(
-                    f"Order {order_id} has already been delivered and is no longer eligible for cancellation or modification.\n"
-                    f"If you received a damaged or incorrect item, you can raise a return or refund request within 30 days of delivery."
+                    f"I can see that order {order_id} has already been delivered, so unfortunately it's not possible to cancel or modify it at this stage.\n"
+                    f"That said, if there's an issue with what you received — such as a damaged or incorrect item — you can raise a return or refund request and we'll take care of it.\n"
+                    f"You have up to 30 days from the delivery date to do so."
                 )
                 continue
+
+            # J2 ineligible — order already cancelled
             if journey_type == "J2" and status == "cancelled":
                 parts.append(
-                    f"Order {order_id} has already been cancelled.\n"
-                    f"If a refund is pending, it will be credited to your original payment method within 3–5 business days.\n"
-                    f"Feel free to place a new order if needed."
+                    f"It looks like order {order_id} has already been cancelled.\n"
+                    f"If a refund is due, it should reach your original payment method within 3 to 5 business days.\n"
+                    f"If you haven't received it yet or need further help, just let me know."
                 )
                 continue
-            lines = [f"Order {order_id} — Status: {status.upper()}"]
+
+            # Active order statuses
+            status_descriptions = {
+                "processing": "is currently being processed and will be dispatched soon",
+                "shipped": "is on its way to you",
+                "out_for_delivery": "is out for delivery today",
+                "delivered": "has been successfully delivered",
+                "cancelled": "has been cancelled",
+            }
+            status_text = status_descriptions.get(status, f"is currently {status}")
+            lines = [f"Your order {order_id} {status_text}."]
             if status not in ("cancelled", "delivered"):
                 if out.get("tracking_number"):
-                    lines.append(f"Tracking number: {out['tracking_number']}")
+                    lines.append(f"You can track it using tracking number: {out['tracking_number']}")
                 if out.get("estimated_delivery"):
-                    lines.append(f"Estimated delivery: {out['estimated_delivery']}")
+                    lines.append(f"Estimated delivery date: {out['estimated_delivery']}")
             parts.append("\n".join(lines))
 
         # ── Clarification sentinels ───────────────────────────────────────
         elif name == "clarify_order_id":
             parts.append(
-                "I'd be happy to help with your request.\n"
-                "Could you please share your order ID (e.g. ORD-78321) so I can look it up?"
+                "I'd love to help you with that!\n"
+                "Could you please share your order ID? It usually looks something like ORD-78321.\n"
+                "You can find it in your order confirmation email."
             )
 
         elif name == "blocked_injection":
             parts.append(
-                "I wasn't able to process that message.\n"
-                "Please rephrase your request and I'll be happy to help."
+                "I'm sorry, I wasn't able to understand that message.\n"
+                "Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies."
             )
 
         elif name == "clarify_customer_id":
             parts.append(
-                "I'd be happy to pull up your support history.\n"
-                "It looks like I don't have your account details in this session.\n"
-                "Could you please log in or share your customer ID (e.g. CUST-001) so I can look up your previous interactions?"
+                "I'd be happy to look up your support history!\n"
+                "It seems I don't have your account linked in this session.\n"
+                "Could you please log in or share your customer ID (it looks like CUST-001) so I can pull up your records?"
             )
 
         elif name == "unauthorized_order_access":
             order_id = out.get("order_id", "that order")
             parts.append(
-                f"Order {order_id} is not associated with your account.\n"
-                f"Please verify the order ID and try again.\n"
-                f"If you believe this is an error, contact our support team."
+                f"I wasn't able to access order {order_id} — it doesn't appear to be linked to your account.\n"
+                f"Please double-check the order ID.\n"
+                f"If you believe this is an error, our support team will be happy to investigate for you."
             )
 
         # ── J2: Cancellation ─────────────────────────────────────────────
@@ -708,23 +724,28 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             order_id = out.get("order_id", "your order")
             cancelled_count = out.get("cancelled_count", 0)
             if cancelled_count == 0:
-                parts.append(f"Order {order_id} has no active items to cancel.")
+                parts.append(
+                    f"It looks like there are no active items left on order {order_id} to cancel.\n"
+                    f"The order may have already been cancelled or fully processed."
+                )
             else:
                 parts.append(
-                    f"Order {order_id} has been fully cancelled.\n"
-                    f"{cancelled_count} item(s) have been marked as cancelled."
+                    f"Done! Order {order_id} has been fully cancelled.\n"
+                    f"All {cancelled_count} item(s) have been marked as cancelled."
                 )
 
         elif name == "cancel_order_item":
-            order_id = out.get("order_id", "")
+            order_id = out.get("order_id", "your order")
             line_id = out.get("line_id", "")
             if out.get("already_cancelled"):
                 parts.append(
-                    f"Item {line_id} on order {order_id} was already cancelled.\n"
-                    f"No further action is needed."
+                    f"It looks like item {line_id} on order {order_id} was already cancelled previously.\n"
+                    f"No further action is needed on our end."
                 )
             else:
-                parts.append(f"Item {line_id} on order {order_id} has been cancelled successfully.")
+                parts.append(
+                    f"Item {line_id} on order {order_id} has been successfully cancelled."
+                )
 
         # ── J2: Refund ───────────────────────────────────────────────────
         elif name == "execute_refund":
@@ -737,13 +758,15 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             sla = out.get("sla_days", 5)
             if amt is not None:
                 parts.append(
-                    f"Refund initiated successfully.\n"
-                    f"Amount: Rs.{float(amt):,.0f}\n"
-                    f"Payment method: {method}\n"
-                    f"Please allow up to {sla} business days for it to reflect."
+                    f"Your refund of Rs.{float(amt):,.0f} has been successfully initiated.\n"
+                    f"It will be credited back to {method}.\n"
+                    f"Please allow up to {sla} business days for the amount to reflect in your account."
                 )
             else:
-                parts.append("Your refund has been initiated successfully.")
+                parts.append(
+                    "Your refund has been initiated successfully.\n"
+                    "It should reflect in your account within a few business days."
+                )
 
         # ── J2: Address update ───────────────────────────────────────────
         elif name == "address_clarification_needed":
@@ -752,27 +775,27 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             if labels:
                 options = ", ".join(f'"{l}"' for l in labels)
                 parts.append(
-                    f"I'd be happy to update the shipping address for order {order_id}.\n"
-                    f"Your saved addresses are: {options}.\n"
-                    f"Which one would you like to use? Or type out a new address directly."
+                    f"Sure, I can update the delivery address for order {order_id}!\n"
+                    f"I found the following saved addresses on your account: {options}.\n"
+                    f"Which one would you like to use? Or if you'd prefer a different address, just type it out and I'll update it."
                 )
             else:
                 parts.append(
-                    f"I'd be happy to update the shipping address for order {order_id}.\n"
-                    f"Please provide the new delivery address including street, city, state, and pincode."
+                    f"Sure, I can update the delivery address for order {order_id}!\n"
+                    f"Please share the new address (including street, city, state, and pincode) and I'll get it updated right away."
                 )
 
         elif name == "update_shipping_address":
-            order_id = out.get("order_id", "")
+            order_id = out.get("order_id", "your order")
             out_addr = out.get("shipping_address", {})
             addr_parts = [
                 out_addr.get("line1"), out_addr.get("line2"),
                 out_addr.get("city"), out_addr.get("state"), out_addr.get("pincode")
             ]
             addr_str = ", ".join(filter(None, addr_parts)) if out_addr else ""
-            lines = [f"Shipping address for order {order_id} has been updated successfully."]
+            lines = [f"The delivery address for order {order_id} has been updated successfully."]
             if addr_str:
-                lines.append(f"New address: {addr_str}")
+                lines.append(f"Your order will now be shipped to: {addr_str}")
             parts.append("\n".join(lines))
 
         # ── J3 / J2 high-value: CRM escalation ──────────────────────────
@@ -781,16 +804,17 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             amount = out.get("amount_inr") or out.get("amount_refunded")
             if amount and float(amount) > 25000:
                 parts.append(
-                    f"Your refund request of Rs.{float(amount):,.0f} exceeds our automated processing limit of Rs.25,000.\n"
-                    f"A specialist case has been raised for manual review.\n"
-                    f"Case reference: {case_id}\n"
-                    f"A team member will process this within the 24-hour SLA."
+                    f"I completely understand how important this is, and I want to make sure it's handled properly.\n"
+                    f"Since the refund amount of Rs.{float(amount):,.0f} is above our automated processing limit of Rs.25,000, "
+                    f"this needs to be reviewed by one of our specialists.\n"
+                    f"I've raised a priority case for you — your reference number is {case_id}.\n"
+                    f"A team member will personally review this and get back to you within 24 hours."
                 )
             else:
                 parts.append(
-                    f"Your request has been escalated to a specialist.\n"
-                    f"Case reference: {case_id}\n"
-                    f"A team member will review this within the 24-hour SLA."
+                    f"I've escalated your request to one of our specialists who will look into this for you.\n"
+                    f"Your case reference number is {case_id} — please keep this handy.\n"
+                    f"You can expect a response within 24 hours."
                 )
 
         elif name in ("get_customer_profile", "get_customer_address"):
@@ -803,84 +827,95 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
                 if len(articles) == 1:
                     article = articles[0]
                     parts.append(
-                        f"{article.get('title', 'Policy')}\n\n"
+                        f"Here's what our policy says about that:\n\n"
+                        f"{article.get('title', 'Policy')}\n"
                         f"{article.get('content', '')}"
                     )
                 else:
-                    section_lines = ["Here is a summary of our relevant policies:\n"]
+                    section_lines = ["Here's a summary of the relevant policies for you:\n"]
                     for article in articles:
                         section_lines.append(f"{article.get('title', 'Policy')}")
                         section_lines.append(f"{article.get('content', '')}")
                         section_lines.append("")  # blank line between articles
                     parts.append("\n".join(section_lines).rstrip())
+            else:
+                parts.append(
+                    "I wasn't able to find a specific policy entry for that topic.\n"
+                    "Please feel free to ask in a different way, or I can connect you with a specialist who can help."
+                )
 
         # ── J5: Case status ──────────────────────────────────────────────
         elif name == "get_case_status":
             if out.get("not_found"):
                 cid = out.get("case_id", "that case")
                 parts.append(
-                    f"I couldn't find case {cid} in our system.\n"
-                    f"Please double-check the case ID and try again.\n"
-                    f"If you need help locating your case number, I can look it up from your order details."
+                    f"I wasn't able to find a case with the ID {cid} in our system.\n"
+                    f"Could you double-check the reference number?\n"
+                    f"If you have the order ID handy, I can try looking it up that way instead."
                 )
                 continue
+
             status = out.get("status", "unknown")
             priority = out.get("priority", "")
             case_id = out.get("case_id", "your case")
             description = out.get("description", "")
             created_at = (out.get("created_at") or "")[:10]
             amount = out.get("amount_inr")
-            status_label = {
-                "open": "Open — under review by our specialist team",
-                "resolved": "Resolved",
-                "closed": "Closed",
-            }.get(status, status.capitalize())
-            lines = [
-                f"Case {case_id}",
-                f"Status: {status_label}",
-            ]
+
+            status_descriptions = {
+                "open": "is currently open and being reviewed by our specialist team",
+                "resolved": "has been resolved",
+                "closed": "has been closed",
+            }
+            status_text = status_descriptions.get(status, f"is currently {status}")
+
+            lines = [f"I found your case! Case {case_id} {status_text}."]
             if created_at:
-                lines.append(f"Opened on: {created_at}")
+                lines.append(f"It was opened on {created_at}.")
             if amount:
-                lines.append(f"Amount: Rs.{float(amount):,.0f}")
+                lines.append(f"The amount involved is Rs.{float(amount):,.0f}.")
             if description:
-                lines.append(f"Details: {description}")
+                lines.append(f"Details on file: {description}")
             if priority == "high" and status == "open":
-                lines.append("Our team will respond within the 24-hour SLA.")
+                lines.append("Given the priority of this case, our team will respond within the 24-hour SLA.")
             parts.append("\n".join(lines))
 
         # ── J4: Customer history ─────────────────────────────────────────
         elif name == "get_customer_interaction_history":
             interactions = out.get("interactions", [])
             if interactions:
-                lines = ["Here is your recent support history:\n"]
+                lines = ["I found your previous interactions with us. Here's a summary:\n"]
                 for i, interaction in enumerate(interactions, 1):
                     ts = interaction.get("timestamp", "")[:10]
-                    summary = interaction.get("summary", "No summary")
+                    summary = interaction.get("summary", "No summary available")
                     resolution = interaction.get("resolution", "unknown")
-                    lines.append(f"{i}. Date: {ts}  |  Resolution: {resolution}")
-                    lines.append(f"   {summary}")
-                    lines.append("")  # spacing between entries
+                    lines.append(f"{i}.  {ts}  —  {resolution.capitalize()}")
+                    lines.append(f"    {summary}")
+                    lines.append("")
                 parts.append("\n".join(lines).rstrip())
                 parts.append(
-                    "I understand this is a recurring concern — I'll ensure it's addressed with full context from your prior interactions."
+                    "I can see this has been an ongoing concern and I appreciate your patience.\n"
+                    "I'll make sure this is addressed with full context from your previous interactions."
                 )
             else:
                 parts.append(
-                    "I don't see any prior interaction records matching your query.\n"
-                    "I'm here to help — please describe your issue and I'll resolve it now."
+                    "I wasn't able to find any previous interactions matching your query.\n"
+                    "No worries though — I'm here to help. Please go ahead and describe your issue and we'll get it sorted."
                 )
 
     if not parts:
-        return "Your request has been processed.\nLet me know if there's anything else I can help with."
+        return (
+            "Your request has been processed.\n"
+            "Let me know if there's anything else I can help you with."
+        )
 
     closing = {
-        "J1": "Is there anything else I can help you with?",
-        "J2": "All requested changes are complete. Let me know if you need anything else.",
-        "J3": "Thank you for your patience. We will get back to you shortly.",
-        "J4": "How can I help you resolve this today?",
-        "J5": "Is there anything else I can help you with?",
-        "J-KB": "Let me know if you have any other questions about our policies.",
+        "J1": "Is there anything else I can help you with today?",
+        "J2": "I hope that's all sorted for you. Let me know if there's anything else you need.",
+        "J3": "I know waiting isn't fun — thank you for your patience. We'll be in touch soon.",
+        "J4": "How else can I help you today?",
+        "J5": "Is there anything else I can assist you with?",
+        "J-KB": "I hope that answers your question! Feel free to ask if you need anything else.",
     }.get(journey_type, "")
 
     # Join blocks with a blank line between each for clear visual separation

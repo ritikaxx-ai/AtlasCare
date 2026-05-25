@@ -7,6 +7,7 @@ Flow:
 J1/J3: deterministic plan + template synthesis (0 LLM calls, sub-second tools)
 J2:    Pydantic AI planning + template synthesis (1 LLM call)
 """
+import asyncio
 import time
 import uuid
 from datetime import datetime, timezone
@@ -39,6 +40,7 @@ from agent.pydantic_agents import generate_plan_llm
 from agent.executor import Executor
 from agent.metrics import get_metrics_collector
 from agent.session_memory import resolve_order_id, resolve_case_id, update_session, get_recent_turns
+import agent.stream_events as stream_events
 from schemas.plan import ExecutionPlan, PlanStep
 from schemas.trace import TraceContext
 
@@ -115,8 +117,8 @@ def _guardrail_node(state: AgentState) -> AgentState:
 # ─── Node 2: Router ──────────────────────────────────────────────────────────
 # Classifies the message into a journey type (J1–J5, J-KB) and resolves any order/case
 # IDs from session memory (so "cancel it" works without repeating the order ID).
-# Also decides whether to use the LLM planner (use_llm_plan=True) or the fast path.
-# Currently use_llm_plan is always False because the deterministic planner handles all cases.
+# J2 uses the LLM planner (Gemini via pydantic_agents.py + system_conductor.txt).
+# All other journeys use the deterministic fast path (0 LLM calls).
 def _router_node(state: AgentState) -> AgentState:
     action = state["guardrail"]["action"]
     session_id = state["session_id"]
@@ -147,7 +149,9 @@ def _router_node(state: AgentState) -> AgentState:
         "resolved_case_id": state.get("resolved_case_id"),
     })
 
-    state["use_llm_plan"] = False
+    # J2 (cancel / refund / address) → Gemini plans which tools to call.
+    # All other journeys → deterministic fast path (0 LLM calls).
+    state["use_llm_plan"] = (state["journey_type"] == "J2")
     return state
 
 
@@ -211,13 +215,15 @@ def _fast_plan_node(state: AgentState) -> AgentState:
 
 
 # ─── Node 3b: LLM Plan ───────────────────────────────────────────────────────
-# Pydantic AI planner — invoked only when use_llm_plan=True (currently unused in prod).
+# Pydantic AI planner — invoked only when use_llm_plan=True (J2 journeys).
 # Builds an order context dict, calls Gemini 2.5 Flash via generate_plan_llm(), and
 # stores the resulting ExecutionPlan in state["plan"].
+# Falls back to the deterministic fast path on any LLM error so the user always
+# gets a response rather than a 500.
 async def _llm_plan_node(state: AgentState) -> AgentState:
     from agent.cache import get_data_store
-    from agent.vector_store import search_customer_history
 
+    trace_id = state.get("trace_id")
     order_id = state.get("resolved_order_id")
     order_context = None
 
@@ -251,8 +257,49 @@ async def _llm_plan_node(state: AgentState) -> AgentState:
                 ],
             }
 
-    plan = await generate_plan_llm(state["message"], order_context=order_context)
-    state["plan"] = plan.model_dump()
+    try:
+        plan = await generate_plan_llm(
+            state["message"], order_context=order_context, trace_id=trace_id
+        )
+        tools_planned = [s.tool for s in plan.steps]
+        log.info({
+            "event": "plan_created",
+            "trace_id": trace_id,
+            "journey_type": state["journey_type"],
+            "tools_planned": tools_planned,
+            "planner": "llm",
+        })
+        state["plan"] = plan.model_dump()
+
+    except Exception as exc:
+        # LLM failed — log the real error and fall back to deterministic planning
+        # so the user still gets a helpful response instead of a 500.
+        log.error({
+            "event": "llm_plan_failed",
+            "trace_id": trace_id,
+            "error": str(exc),
+            "error_type": type(exc).__name__,
+            "fallback": "fast_path",
+        })
+        # Reuse the same fast-path logic as _fast_plan_node for J2
+        if not order_id:
+            fallback_plan = ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
+        else:
+            fallback_plan = try_build_j2_plan(
+                state["message"], state.get("customer_id"), order_id
+            )
+            if fallback_plan is None:
+                fallback_plan = ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
+
+        log.info({
+            "event": "plan_created",
+            "trace_id": trace_id,
+            "journey_type": state["journey_type"],
+            "tools_planned": [s.tool for s in fallback_plan.steps],
+            "planner": "fast_path_fallback",
+        })
+        state["plan"] = fallback_plan.model_dump()
+
     return state
 
 
@@ -319,7 +366,12 @@ def get_atlascare_graph():
     return _atlascare_graph
 
 
-async def run_query(message: str, session_id: str, customer_id: Optional[str] = None) -> dict:
+async def run_query(
+    message: str,
+    session_id: str,
+    customer_id: Optional[str] = None,
+    event_queue: Optional[asyncio.Queue] = None,
+) -> dict:
     """Execute full LangGraph pipeline and return response + trace dict."""
     start = time.perf_counter()
     trace_id = f"trc-{uuid.uuid4().hex[:8]}"
@@ -349,8 +401,18 @@ async def run_query(message: str, session_id: str, customer_id: Optional[str] = 
         "resolved_case_id": None,
     }
 
+    # Register the SSE queue so nodes can push live events during execution.
+    # Non-streaming callers pass None — all emit calls become silent no-ops.
+    if event_queue is not None:
+        stream_events.register(trace_id, event_queue)
+
     graph = get_atlascare_graph()
-    final_state = await graph.ainvoke(initial_state)
+    try:
+        final_state = await graph.ainvoke(initial_state)
+    finally:
+        # Always deregister, even on error, so the queue is never left dangling.
+        if event_queue is not None:
+            stream_events.deregister(trace_id)
 
     latency_ms = int((time.perf_counter() - start) * 1000)
     trace_data = final_state["trace"]

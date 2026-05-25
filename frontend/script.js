@@ -258,13 +258,26 @@ async function sendQueryStreaming(message, bubbleEl) {
       let evt;
       try { evt = JSON.parse(line.slice(6)); } catch { continue; }
 
-      if (evt.type === 'token') {
+      if (evt.type === 'thinking') {
+        // LLM planning started — hide the full-page overlay, show inline status
         if (!loadingHidden) { hideLoading(); loadingHidden = true; }
+        setStatusLine(bubbleEl, evt.content, 'thinking');
+
+      } else if (evt.type === 'tool_start') {
+        // A tool is about to run — update the inline status line
+        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
+        setStatusLine(bubbleEl, evt.content, 'tool');
+
+      } else if (evt.type === 'token') {
+        // First token — remove status line and start rendering the response
+        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
+        clearStatusLine(bubbleEl);
         fullText += evt.content;
         bubbleEl.innerHTML = renderMarkdown(fullText) + '<span class="cursor">▋</span>';
         scrollChatToBottom();
 
       } else if (evt.type === 'done') {
+        clearStatusLine(bubbleEl);
         bubbleEl.innerHTML = renderMarkdown(fullText);
         if (!loadingHidden) hideLoading();
         saveTrace(evt.trace, message);
@@ -395,6 +408,28 @@ function addMessageToChat(text, type, streaming = false) {
   chatWindow.insertBefore(div, chatWindow.firstChild);
   chatWindow.scrollTop = 0;
   return div;
+}
+
+// ==================== LIVE STATUS LINE ====================
+
+/**
+ * Show a live status line inside the bot's message bubble while the pipeline runs.
+ * mode: 'thinking' → purple pulsing dot, 'tool' → blue spinner dot
+ */
+function setStatusLine(bubbleEl, text, mode) {
+  let statusEl = bubbleEl.querySelector('.stream-status');
+  if (!statusEl) {
+    statusEl = document.createElement('div');
+    statusEl.className = 'stream-status';
+    bubbleEl.appendChild(statusEl);
+  }
+  const dotClass = mode === 'thinking' ? 'status-dot-thinking' : 'status-dot-tool';
+  statusEl.innerHTML = `<span class="status-dot-live ${dotClass}"></span><span class="status-text-live">${text}</span>`;
+}
+
+function clearStatusLine(bubbleEl) {
+  const statusEl = bubbleEl.querySelector('.stream-status');
+  if (statusEl) statusEl.remove();
 }
 
 function renderMarkdown(text) {

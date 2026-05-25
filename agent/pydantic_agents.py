@@ -93,7 +93,7 @@ def _build_user_prompt(message: str, order_context: Optional[dict]) -> str:
 
 
 async def generate_plan_llm(
-    message: str, order_context: Optional[dict] = None
+    message: str, order_context: Optional[dict] = None, trace_id: Optional[str] = None
 ) -> ExecutionPlan:
     """Pydantic AI planning for J2 — single validated LLM call with order context.
 
@@ -101,6 +101,7 @@ async def generate_plan_llm(
     - _LLM_SEMAPHORE  → max 10 concurrent Gemini calls (rate-limit protection)
     - asyncio.timeout → hard {LLM_TIMEOUT_SECONDS}s wall-clock limit
     """
+    from agent.stream_events import emit_async
     agent = get_planning_agent()
     metrics = get_metrics_collector()
     start = time.perf_counter()
@@ -108,6 +109,14 @@ async def generate_plan_llm(
 
     log.info({"event": "llm_call_start", "model": "gemini-2.5-flash",
               "operation": "planning_pydantic_ai"})
+
+    # Emit a live "thinking" event so the frontend can show an indicator
+    # while Gemini decides which tools to call.
+    if trace_id:
+        await emit_async(trace_id, {
+            "type": "thinking",
+            "content": "AI is analysing your request and deciding what to do..."
+        })
 
     try:
         async with _LLM_SEMAPHORE:

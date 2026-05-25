@@ -264,12 +264,14 @@ async def query_stream(request: QueryRequest):  # noqa: C901
     """
     Streaming version of /query using Server-Sent Events.
 
-    Event types:
-      {"type": "token",   "content": " word"}   — one word at a time
-      {"type": "done",    "journey_type": "J1", "trace": {...}}  — end of stream
-      {"type": "error",   "message": "..."}      — pipeline error
+    Event types emitted in order:
+      {"type": "thinking",   "content": "AI is analysing..."}   — LLM planning started
+      {"type": "tool_start", "tool": "get_order_status",
+                             "content": "Looking up your order..."} — before each tool runs
+      {"type": "token",      "content": " word"}                — final response, word by word
+      {"type": "done",       "journey_type": "J1", "trace": {...}} — end of stream
+      {"type": "error",      "message": "..."}                  — pipeline error
     """
-    # Input validation for streaming too
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=400, detail="message must not be empty")
     if len(request.message) > MAX_MESSAGE_LENGTH:
@@ -279,35 +281,113 @@ async def query_stream(request: QueryRequest):  # noqa: C901
         raise HTTPException(status_code=400, detail="session_id must be alphanumeric")
 
     async def event_generator():
+        # Each streaming request gets its own queue.
+        # run_query() will register it before the graph runs and deregister after.
+        queue: asyncio.Queue = asyncio.Queue()
+        result_holder: dict = {}
+        error_holder: dict = {}
+
+        async def run_pipeline():
+            try:
+                result = await run_query(
+                    request.message,
+                    request.session_id,
+                    request.customer_id,
+                    event_queue=queue,
+                )
+                result_holder["result"] = result
+            except Exception as exc:
+                error_holder["error"] = exc
+            finally:
+                # Always push the sentinel so the consumer loop below can exit.
+                await queue.put({"type": "__done__"})
+
+        # Run the pipeline concurrently so we can consume events as they arrive.
+        pipeline_task = asyncio.create_task(run_pipeline())
+
+        # Minimum time (seconds) a tool_start / thinking status line stays visible.
+        # Without this, fast tools (<10 ms) emit and are replaced before the browser
+        # renders even a single frame — the user sees nothing.
+        STATUS_MIN_VISIBLE_S = 0.45
+
+        # 4 KB SSE comment pad appended to every event.
+        # Root cause: uvicorn/OS TCP coalesces small SSE chunks into one burst.
+        # Padding each event past the socket-send-buffer threshold forces an
+        # immediate TCP flush so the browser reader.read() fires per-event.
+        # The ': ...' line is an SSE comment — browsers and our JS ignore it.
+        _SSE_PAD = ": " + "p" * 4096 + "\n\n"
+
+        # Consume and forward events until the pipeline signals it's done.
+        # For each visible status event we enforce the minimum display time.
+        last_status_sent_at = None
         try:
-            result = await run_query(
-                request.message, request.session_id, request.customer_id
-            )
-            _store_trace(result["trace"].get("trace_id", ""), result["trace"],
-                         result.get("journey_type", ""), request.message, result["response"])
-            response_text = result["response"]
+            while True:
+                event = await queue.get()
+                if event["type"] == "__done__":
+                    break
 
-            # Stream word by word with a small delay for natural feel
-            words = response_text.split(" ")
-            for i, word in enumerate(words):
-                chunk = word if i == 0 else " " + word
-                yield f"data: {json.dumps({'type': 'token', 'content': chunk})}\n\n"
-                await asyncio.sleep(0.04)   # ~25 words/sec
+                # If this is a new status event, wait until the previous one
+                # has been on screen for at least STATUS_MIN_VISIBLE_S seconds.
+                if event["type"] in ("thinking", "tool_start"):
+                    if last_status_sent_at is not None:
+                        elapsed = asyncio.get_event_loop().time() - last_status_sent_at
+                        gap = STATUS_MIN_VISIBLE_S - elapsed
+                        if gap > 0:
+                            await asyncio.sleep(gap)
+                    last_status_sent_at = asyncio.get_event_loop().time()
 
-            # Final event carries trace + journey metadata
-            yield f"data: {json.dumps({'type': 'done', 'journey_type': result['journey_type'], 'trace': result['trace']})}\n\n"
+                yield f"data: {json.dumps(event)}\n\n{_SSE_PAD}"
+        except Exception:
+            pass
 
-        except ValueError as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
-        except Exception as e:
-            yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
+        # Hold the last status line visible before the response starts streaming.
+        if last_status_sent_at is not None:
+            elapsed = asyncio.get_event_loop().time() - last_status_sent_at
+            gap = STATUS_MIN_VISIBLE_S - elapsed
+            if gap > 0:
+                await asyncio.sleep(gap)
+
+        await pipeline_task  # ensure the task is fully finished
+
+        if error_holder:
+            err = error_holder["error"]
+            yield f"data: {json.dumps({'type': 'error', 'message': str(err)})}\n\n"
+            return
+
+        result = result_holder.get("result", {})
+        _store_trace(
+            result.get("trace", {}).get("trace_id", ""),
+            result.get("trace", {}),
+            result.get("journey_type", ""),
+            request.message,
+            result.get("response", ""),
+        )
+
+        # Stream the final response line-by-line.
+        # Root cause of buffering: uvicorn / OS TCP coalesces small SSE chunks
+        # and flushes them all at once when the generator finishes, regardless
+        # of asyncio.sleep calls.  The reliable fix is to pad each SSE event
+        # past the OS socket-send-buffer threshold (~4 KB) so it MUST be sent
+        # immediately as its own TCP segment.
+        # We use an SSE comment line (starts with ':') which the browser SSE
+        # spec says to ignore — so the JS parser skips it cleanly.
+        _PAD = ": " + "p" * 4096 + "\n\n"   # ~4 KB flush-pad per event
+
+        response_text = result.get("response", "")
+        lines = response_text.split("\n")
+        for i, line in enumerate(lines):
+            content = line if i == 0 else "\n" + line
+            yield f"data: {json.dumps({'type': 'token', 'content': content})}\n\n{_PAD}"
+            await asyncio.sleep(0.18 if line.strip() else 0.08)
+
+        yield f"data: {json.dumps({'type': 'done', 'journey_type': result.get('journey_type', ''), 'trace': result.get('trace', {})})}\n\n"
 
     return StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
-            "X-Accel-Buffering": "no",   # disable nginx buffering if behind a proxy
+            "X-Accel-Buffering": "no",
             "Connection": "keep-alive",
         },
     )

@@ -1,6 +1,6 @@
 {
   "description": "Synthetic CRM past interaction summaries for RAG retrieval",
-  "count": 717,
+  "count": 769,
   "interactions": [
     {
       "interaction_id": "INT-PRIYA-001",
@@ -9882,6 +9882,701 @@
       "tags": [
         "tracking",
         "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-31ED7DF4",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78450",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:03:21.782048+00:00",
+      "summary": "Order ORD-78450 — Status: CANCELLED  Is there anything else I can help you with?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779696196000.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-4C23B3EC",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78450",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:03:29.753562+00:00",
+      "summary": "Order ORD-78450 — Status: CANCELLED  Is there anything else I can help you with?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779696196000.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-224D04A8",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78450",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:31:28.981858+00:00",
+      "summary": "Your order ORD-78450 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779697885384.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-F26B1484",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78450",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:31:35.646955+00:00",
+      "summary": "Your order ORD-78450 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779697885384.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-B6D2964B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:31:38.876911+00:00",
+      "summary": "Your order ORD-78321 is on its way to you. You can track it using tracking number: TRACK-7X9K2M Estimated delivery date: 2025-05-08  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779697885384.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-3C1D860D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:31:54.660964+00:00",
+      "summary": "The delivery address for order ORD-78321 has been updated successfully. Your order will now be shipped to: 12 MG Road, Koramangala, Bengaluru, Karnataka, 560034  I hope that's all sorted for you. Let ",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779697885384.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-8423239E",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:32:04.549601+00:00",
+      "summary": "I completely understand how important this is, and I want to make sure it's handled properly. Since the refund amount of Rs.55,000 is above our automated processing limit of Rs.25,000, this needs to b",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779697885384.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-F0B69C1C",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:32:30.360852+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779697885384.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-6F7A9426",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:37:56.882211+00:00",
+      "summary": "The delivery address for order ORD-78321 has been updated successfully. Your order will now be shipped to: 12 MG Road, Koramangala, Bengaluru, Karnataka, 560034  I hope that's all sorted for you. Let ",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698268088.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-840A29CC",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:38:16.636939+00:00",
+      "summary": "I completely understand how important this is, and I want to make sure it's handled properly. Since the refund amount of Rs.55,000 is above our automated processing limit of Rs.25,000, this needs to b",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698268088.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-1C1B7A72",
+      "customer_id": "CUST-002",
+      "order_id": "ORD-78100",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:39:48.253798+00:00",
+      "summary": "I can see that order ORD-78100 has already been delivered, so unfortunately it's not possible to cancel or modify it at this stage. That said, if there's an issue with what you received — such as a da",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698369328.",
+      "resolution": "resolved",
+      "tags": [
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-4ED593AF",
+      "customer_id": "CUST-002",
+      "order_id": "ORD-78100",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:40:05.687484+00:00",
+      "summary": "I can see that order ORD-78100 has already been delivered, so unfortunately it's not possible to cancel or modify it at this stage. That said, if there's an issue with what you received — such as a da",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698369328.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-ECA398C4",
+      "customer_id": "CUST-002",
+      "order_id": "ORD-78100",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:40:17.511795+00:00",
+      "summary": "Your order ORD-78100 has been successfully delivered.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779698369328.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-19F283F7",
+      "customer_id": "CUST-003",
+      "order_id": "ORD-78612",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:40:36.167149+00:00",
+      "summary": "The delivery address for order ORD-78612 has been updated successfully. Your order will now be shipped to: 22 Anna Salai, Nungambakkam, Chennai, Tamil Nadu, 600006  I hope that's all sorted for you. L",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698426167.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-00BE14C0",
+      "customer_id": "CUST-003",
+      "order_id": "ORD-78612",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:41:26.766956+00:00",
+      "summary": "Item  on order ORD-78612 has been successfully cancelled.  Your refund of Rs.4,999 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busin",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698426167.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-74043A5F",
+      "customer_id": "CUST-003",
+      "order_id": "ORD-78612",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:44:12.138612+00:00",
+      "summary": "Your order ORD-78612 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779698426167.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-4E805745",
+      "customer_id": "CUST-003",
+      "order_id": "ORD-78612",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:44:38.303870+00:00",
+      "summary": "Your order ORD-78612 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779698672637.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-84A020DD",
+      "customer_id": "CUST-004",
+      "order_id": "ORD-78705",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:45:40.459906+00:00",
+      "summary": "I completely understand how important this is, and I want to make sure it's handled properly. Since the refund amount of Rs.59,900 is above our automated processing limit of Rs.25,000, this needs to b",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698701582.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-B4F4C723",
+      "customer_id": "CUST-004",
+      "order_id": "ORD-78705",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:45:58.487392+00:00",
+      "summary": "Item  on order ORD-78705 has been successfully cancelled.  Your refund of Rs.9,900 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busin",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779698701582.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-8FB34622",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:56:02.629245+00:00",
+      "summary": "Your order ORD-78801 is on its way to you. Estimated delivery date: 2025-05-17  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779699358006.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-EB56EE79",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:56:10.138910+00:00",
+      "summary": "The delivery address for order ORD-78801 has been updated successfully. Your order will now be shipped to: 9 Park Street, Kolkata, West Bengal, 700016  I hope that's all sorted for you. Let me know if",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779699358006.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-E9554302",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:56:17.354894+00:00",
+      "summary": "Done! Order ORD-78801 has been fully cancelled. All 2 item(s) have been marked as cancelled.  Your refund of Rs.5,695 has been successfully initiated. It will be credited back to your original payment",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779699358006.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-557A664C",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "channel": "chat",
+      "timestamp": "2026-05-25T08:56:27.744727+00:00",
+      "summary": "Your order ORD-78801 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779699358006.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-5D7DAB61",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:09:29.940710+00:00",
+      "summary": "Your order ORD-78801 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779699358006.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-8014C2CC",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:13:05.783427+00:00",
+      "summary": "Your order ORD-78801 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779700382616.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-50817739",
+      "customer_id": "CUST-005",
+      "order_id": "ORD-78801",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:13:10.983744+00:00",
+      "summary": "Your order ORD-78801 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779700382616.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-EBCEF202",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:13:14.001223+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779700382616.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-3B5CDA92",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:15:06.146852+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779700504281.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-CF994C40",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:15:29.201051+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779700504281.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-5877082B",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:26:39.394200+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-61A04F0A",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:26:44.521706+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-2386FC54",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:26:49.378638+00:00",
+      "summary": "Here's what our policy says about that:  Partial Cancellation and Reshipping Customers can cancel individual line items from an order. The remainder of the order will be shipped normally. Customers ma",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-260A0866",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78450",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:26:52.931735+00:00",
+      "summary": "Your order ORD-78450 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-70E5CE9D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78450",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:26:55.692877+00:00",
+      "summary": "Your order ORD-78450 has been cancelled.  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-7DF354E7",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:26:58.610030+00:00",
+      "summary": "Your order ORD-78321 is on its way to you. You can track it using tracking number: TRACK-7X9K2M Estimated delivery date: 2025-05-08  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-C2038950",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:27:01.518235+00:00",
+      "summary": "The delivery address for order ORD-78321 has been updated successfully. Your order will now be shipped to: 12 MG Road, Koramangala, Bengaluru, Karnataka, 560034  I hope that's all sorted for you. Let ",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-5E45A0E9",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:27:07.065868+00:00",
+      "summary": "I completely understand how important this is, and I want to make sure it's handled properly. Since the refund amount of Rs.55,000 is above our automated processing limit of Rs.25,000, this needs to b",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: session-1779701177275.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-DC35B1B1",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:27:40.650239+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: test-stream-123.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-CC2CCC3D",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:28:32.631145+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: test-stream-456.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-C4B67AF6",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:29:55.482504+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: ts2.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-A103E898",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:39:33.829272+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: ts3.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-7D79003E",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:50:57.936824+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: ts4.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-CA2BFD66",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:52:20.727268+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: ts5.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-3138178A",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:52:44.293249+00:00",
+      "summary": "Here's what our policy says about that:  Warranty Claims for Electronics All electronics sold on Acme Retail carry the manufacturer's warranty. For warranty claims after the 30-day return window, cust",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702762227.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-099AAC37",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:52:47.240014+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702762227.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-CC93D778",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:52:52.657168+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Refund Policy and Threshold Rules Acme Retail processes refunds automatically for amounts up to Rs.25,000 via the Payments Gateway. Refund requests ",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702762227.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-8A9392F8",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:53:22.982156+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Order Tracking and Shipping SLAs Orders in 'processing' status are typically dispatched within 1–2 business days. Once shipped, a tracking number is",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: ts6.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-4B60F15E",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:53:57.423810+00:00",
+      "summary": "Here's what our policy says about that:  Partial Cancellation and Reshipping Customers can cancel individual line items from an order. The remainder of the order will be shipped normally. Customers ma",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702835820.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-14A134E0",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:53:59.835849+00:00",
+      "summary": "Here's what our policy says about that:  Warranty Claims for Electronics All electronics sold on Acme Retail carry the manufacturer's warranty. For warranty claims after the 30-day return window, cust",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702835820.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-E24CEDC5",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:54:02.974097+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Supported Payment Methods Acme Retail supports the following payment methods: UPI, HDFC Credit Card, ICICI Debit Card, SBI Credit Card, and Cash on ",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702835820.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-EEE5A892",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:54:06.330471+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Refund Policy and Threshold Rules Acme Retail processes refunds automatically for amounts up to Rs.25,000 via the Payments Gateway. Refund requests ",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702835820.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-DDB304BE",
+      "customer_id": "UNKNOWN",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-25T09:54:14.914697+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: session-1779702835820.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
       ]
     }
   ]

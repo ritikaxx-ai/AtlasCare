@@ -12,6 +12,7 @@ from typing import Dict, Any, Type
 from schemas.plan import ExecutionPlan
 from schemas.trace import TraceContext
 from tools.base import TracedTool
+from agent.stream_events import emit_sync, TOOL_LABELS
 from tools.oms import (
     get_order_status,
     cancel_order_item,
@@ -63,17 +64,21 @@ class Executor:
         If any tool fails, execution stops immediately (fail-fast).
         All results and errors are captured in the trace context.
         """
+        trace_id = getattr(self.trace_ctx, "trace_id", "")
+
         for step in plan.steps:
             tool_class = self.tools.get(step.tool)
             if not tool_class:
-                # Unknown tool - fail fast
-                # We could log an error in the trace manually here, but for simplicity:
                 raise ValueError(f"Unknown tool requested in plan: {step.tool}")
-                
+
+            # Emit a live progress event before running the tool.
+            # This is a no-op for non-streaming requests (no queue registered).
+            label = TOOL_LABELS.get(step.tool, f"Running {step.tool}...")
+            emit_sync(trace_id, {"type": "tool_start", "tool": step.tool, "content": label})
+
             tool_instance = tool_class(self.trace_ctx)
-            
             try:
-                # Call tool which automatically records telemetry in trace_ctx
+                # Call tool — automatically records telemetry in trace_ctx
                 tool_instance(**step.params)
             except Exception as e:
                 # Stop execution on first failure
