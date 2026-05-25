@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCustomerId();
   setupEventListeners();
   setupSidebar();
+  setupPolicyButtons();
   checkServerConnection();
 });
 
@@ -611,6 +612,14 @@ function escAttr(str) {
 }
 
 // ==================== SIDEBAR COLLAPSE ====================
+
+function setupPolicyButtons() {
+  document.querySelectorAll('.policy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setInput(btn.dataset.prompt);
+    });
+  });
+}
 
 function setupSidebar() {
   const main = document.querySelector('.chat-main');
