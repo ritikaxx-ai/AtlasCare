@@ -40,6 +40,17 @@ from schemas.plan import ExecutionPlan, PlanStep
 client = TestClient(app)
 
 # ---------------------------------------------------------------------------
+# Auth helpers
+# ---------------------------------------------------------------------------
+
+def _auth_headers(customer_id: str) -> dict:
+    """Obtain a JWT for customer_id and return the Authorization header dict."""
+    resp = client.post("/auth/login", json={"customer_id": customer_id})
+    assert resp.status_code == 200, f"Login failed for {customer_id}: {resp.text}"
+    token = resp.json()["token"]
+    return {"Authorization": f"Bearer {token}"}
+
+# ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
 
@@ -458,11 +469,10 @@ def test_j2b_cancel_full_order_refund():
 
 def test_j2c_address_update_only():
     """Address-only request: update_shipping_address, no cancel or refund."""
-    resp = client.post("/query", json={
-        "message": "Ship order ORD-79500 to my office address",
-        "session_id": "t-j2c-1",
-        "customer_id": "CUST-001",
-    })
+    resp = client.post("/query",
+        json={"message": "Ship order ORD-79500 to my office address", "session_id": "t-j2c-1"},
+        headers=_auth_headers("CUST-001"),
+    )
     assert resp.status_code == 200
     data = resp.json()
     names = _tool_names(data)
@@ -481,11 +491,11 @@ def test_j2c_address_update_only():
 
 def test_j2d_compound_cancel_refund_reship_order():
     """Full J2 assignment: cancel → refund → update_shipping_address, in that order."""
-    resp = client.post("/query", json={
-        "message": "Cancel item 3 from ORD-79500, refund me, and ship the other items to my office address",
-        "session_id": "t-j2d-1",
-        "customer_id": "CUST-001",
-    })
+    resp = client.post("/query",
+        json={"message": "Cancel item 3 from ORD-79500, refund me, and ship the other items to my office address",
+              "session_id": "t-j2d-1"},
+        headers=_auth_headers("CUST-001"),
+    )
     assert resp.status_code == 200
     data = resp.json()
     names = _tool_names(data)
@@ -527,11 +537,10 @@ def test_j2e_executor_gate_blocks_phantom_refund():
 
 def test_j2f_high_value_routed_to_crm():
     """Item 1 on ORD-78321 is ₹55000 → must use create_crm_case, not execute_refund."""
-    resp = client.post("/query", json={
-        "message": "Cancel item 1 from ORD-78321 and refund me",
-        "session_id": "t-j2f-1",
-        "customer_id": "CUST-001",
-    })
+    resp = client.post("/query",
+        json={"message": "Cancel item 1 from ORD-78321 and refund me", "session_id": "t-j2f-1"},
+        headers=_auth_headers("CUST-001"),
+    )
     assert resp.status_code == 200
     data = resp.json()
     names = _tool_names(data)
@@ -573,11 +582,11 @@ def test_amount_coercion_string_does_not_crash():
 
 def test_j4_interaction_history():
     """J4: get_customer_interaction_history called; get_order_status must not fire."""
-    resp = client.post("/query", json={
-        "message": "This is the third time I'm calling about my damaged laptop",
-        "session_id": "t-j4-1",
-        "customer_id": "CUST-001",
-    })
+    resp = client.post("/query",
+        json={"message": "This is the third time I'm calling about my damaged laptop",
+              "session_id": "t-j4-1"},
+        headers=_auth_headers("CUST-001"),
+    )
     assert resp.status_code == 200
     data = resp.json()
     names = _tool_names(data)

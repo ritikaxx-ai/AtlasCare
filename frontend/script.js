@@ -6,6 +6,7 @@ const API_BASE = window.location.origin;
 const state = {
   sessionId: `session-${Date.now()}`,
   customerId: null,
+  authToken: null,       // JWT issued by POST /auth/login
   pendingMessage: null,
   // Per-session counters (this customer only, this browser tab)
   session: {
@@ -14,20 +15,36 @@ const state = {
   },
 };
 
-// ==================== CUSTOMER ID (from URL param) ====================
+// ==================== AUTH — login and token management ====================
 
-function initCustomerId() {
+async function initCustomerId() {
   const params = new URLSearchParams(window.location.search);
   const cid = params.get('cid');
   if (!cid || !/^CUST-\d{3}$/.test(cid)) {
-    // No valid ID — bounce back to landing
     window.location.href = '/';
     return;
   }
-  state.customerId = cid;
-  addCustomerBadgeToHeader(cid);
-  showToast(`Logged in as ${cid}`, 'success');
-  loadOrders(cid);
+
+  // Exchange customer_id for a JWT — customer_id never leaves this call again.
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customer_id: cid }),
+    });
+    if (!res.ok) {
+      showToast('Login failed — customer not found', 'error');
+      return;
+    }
+    const data = await res.json();
+    state.authToken = data.token;
+    state.customerId = cid;   // kept locally only for UI display
+    addCustomerBadgeToHeader(cid);
+    showToast(`Logged in as ${cid}`, 'success');
+    loadOrders(cid);
+  } catch (e) {
+    showToast('Login error — please refresh', 'error');
+  }
 }
 
 function addCustomerBadgeToHeader(customerId) {
@@ -203,13 +220,15 @@ async function handleChatSubmit(e) {
 }
 
 async function sendQueryStreaming(message, bubbleEl) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (state.authToken) headers['Authorization'] = `Bearer ${state.authToken}`;
+
   const response = await fetch(`${API_BASE}/query/stream`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       message,
       session_id: state.sessionId,
-      customer_id: state.customerId || null,
     }),
   });
 
@@ -336,13 +355,15 @@ async function sendQueryStreaming(message, bubbleEl) {
 
 async function sendQueryFallback(message, bubbleEl) {
   // Non-streaming fallback for environments where SSE is buffered (e.g. Render free proxy)
+  const headers = { 'Content-Type': 'application/json' };
+  if (state.authToken) headers['Authorization'] = `Bearer ${state.authToken}`;
+
   const response = await fetch(`${API_BASE}/query`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({
       message,
       session_id: state.sessionId,
-      customer_id: state.customerId || null,
     }),
   });
 

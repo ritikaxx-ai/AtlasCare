@@ -1,16 +1,21 @@
 from dotenv import load_dotenv
 load_dotenv()  # loads GEMINI_API_KEY (and any other vars) from .env before anything else
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import asyncio
+import datetime
 import json
+import jwt
 import os
 import re
+from typing import Optional
 
 from schemas.request import QueryRequest, QueryResponse
+from agent.session_memory import get_customer_id, update_session
 from schemas.trace import TraceContext
 from agent.metrics import get_metrics_collector
 from agent.cache import get_data_store
@@ -30,6 +35,65 @@ app.add_middleware(
 
 metrics_collector = get_metrics_collector()
 data_store = get_data_store()
+
+# ---------------------------------------------------------------------------
+# JWT auth
+# ---------------------------------------------------------------------------
+
+_JWT_SECRET = os.environ.get("JWT_SECRET", "atlascare-secret-key-change-in-production")
+_JWT_ALGORITHM = "HS256"
+_JWT_EXPIRY_HOURS = 8
+_bearer = HTTPBearer(auto_error=False)
+
+
+def _create_token(customer_id: str) -> str:
+    payload = {
+        "customer_id": customer_id,
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=_JWT_EXPIRY_HOURS),
+        "iat": datetime.datetime.utcnow(),
+    }
+    return jwt.encode(payload, _JWT_SECRET, algorithm=_JWT_ALGORITHM)
+
+
+def _decode_token(token: str) -> dict:
+    try:
+        return jwt.decode(token, _JWT_SECRET, algorithms=[_JWT_ALGORITHM])
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired — please log in again")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def get_customer_from_token(
+    credentials: HTTPAuthorizationCredentials = Depends(_bearer),
+) -> Optional[str]:
+    """
+    FastAPI dependency — extracts customer_id from Bearer JWT.
+    Returns None if no token is provided (unauthenticated requests still work
+    but won't have ownership checks enforced).
+    """
+    if credentials is None:
+        return None
+    return _decode_token(credentials.credentials).get("customer_id")
+
+
+@app.post("/auth/login")
+def login(body: dict):
+    """
+    Issue a JWT for a customer.
+    Body: { "customer_id": "CUST-001" }
+    Response: { "token": "<JWT>", "expires_in_hours": 8 }
+
+    In production this would verify credentials (password / OTP).
+    For the hackathon demo it trusts the supplied customer_id.
+    """
+    customer_id = body.get("customer_id", "").strip()
+    if not customer_id:
+        raise HTTPException(status_code=400, detail="customer_id is required")
+    if not data_store.get_customer(customer_id):
+        raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
+    token = _create_token(customer_id)
+    return {"token": token, "expires_in_hours": _JWT_EXPIRY_HOURS}
 
 _frontend_dir = os.path.join(os.path.dirname(__file__), "frontend")
 app.mount("/static", StaticFiles(directory=_frontend_dir), name="static")
@@ -219,13 +283,19 @@ _SESSION_ID_RE = re.compile(r'^[a-zA-Z0-9_\-]{1,128}$')
 
 
 @app.post("/query", response_model=QueryResponse)
-async def query(request: QueryRequest):
+async def query(
+    request: QueryRequest,
+    customer_id: Optional[str] = Depends(get_customer_from_token),
+):
     """
     LangGraph pipeline:
       guardrail → router → fast_plan|llm_plan → executor → synthesize
 
     J1/J3: 0 LLM calls (deterministic + templates)
     J2:    1 Pydantic AI LLM call for planning
+
+    Authentication: pass Authorization: Bearer <JWT> header (obtained from POST /auth/login).
+    customer_id is extracted server-side — never accepted in the request body.
     """
     # ── Input validation (HTTP 400, never 500) ────────────────────────────
     if not request.message or not request.message.strip():
@@ -241,8 +311,13 @@ async def query(request: QueryRequest):
             detail="session_id must be alphanumeric (hyphens/underscores allowed, max 128 chars)"
         )
 
+    # Bind customer_id to this session so subsequent turns don't need the token
+    # re-decoded — session_memory becomes the source of truth within a session.
+    if customer_id:
+        update_session(request.session_id, "", "", customer_id=customer_id)
+
     try:
-        result = await run_query(request.message, request.session_id, request.customer_id)
+        result = await run_query(request.message, request.session_id, customer_id)
     except ValueError as e:
         log.error({"event": "request_error", "error": str(e), "type": "validation"})
         raise HTTPException(status_code=400, detail=str(e))
@@ -263,7 +338,10 @@ async def query(request: QueryRequest):
 
 
 @app.post("/query/stream")
-async def query_stream(request: QueryRequest):  # noqa: C901
+async def query_stream(
+    request: QueryRequest,
+    customer_id: Optional[str] = Depends(get_customer_from_token),
+):  # noqa: C901
     """
     Streaming version of /query using Server-Sent Events.
 
@@ -283,9 +361,10 @@ async def query_stream(request: QueryRequest):  # noqa: C901
     if not _SESSION_ID_RE.match(request.session_id):
         raise HTTPException(status_code=400, detail="session_id must be alphanumeric")
 
+    if customer_id:
+        update_session(request.session_id, "", "", customer_id=customer_id)
+
     async def event_generator():
-        # Each streaming request gets its own queue.
-        # run_query() will register it before the graph runs and deregister after.
         queue: asyncio.Queue = asyncio.Queue()
         result_holder: dict = {}
         error_holder: dict = {}
@@ -295,7 +374,7 @@ async def query_stream(request: QueryRequest):  # noqa: C901
                 result = await run_query(
                     request.message,
                     request.session_id,
-                    request.customer_id,
+                    customer_id,
                     event_queue=queue,
                 )
                 result_holder["result"] = result

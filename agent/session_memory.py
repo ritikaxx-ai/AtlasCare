@@ -104,6 +104,11 @@ def get_recent_turns(session_id: str, n: int = 3) -> List[Tuple[str, str]]:
     return session["turns"][-n:]
 
 
+def get_customer_id(session_id: str) -> Optional[str]:
+    """Return the customer_id bound to this session at login, or None."""
+    return get_session(session_id).get("customer_id")
+
+
 def clear_session(session_id: str) -> None:
     """Wipe all memory for a session (called on customer switch)."""
     with _lock:
