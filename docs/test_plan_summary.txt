@@ -26,6 +26,8 @@ COVERED
    - execute_refund never fires when amount > ₹25,000
    - Prompt injection patterns blocked pre-LLM (0 Groq calls wasted)
    - Unauthorized order access rejected (customer_id mismatch)
+   - Executor gate: cancel soft-failure (already_cancelled, not_found) blocks execute_refund
+   - Phantom refund prevention verified: already-cancelled item → 0 refund calls
 
 4. Session Memory
    - Turn 1 establishes order_id, Turn 2 resolves it from memory

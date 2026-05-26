@@ -41,9 +41,11 @@ POST /query  or  POST /query/stream
        │
        ▼
 ┌──────────────┐
-│   executor   │  Runs plan steps sequentially, fail-fast
+│   executor   │  Runs plan steps sequentially with output-based gate checks
 │              │  • Every tool call recorded in TraceContext
 │              │  • tool_name, input, output, latency_ms, success, timestamp
+│              │  • Gate: cancel_* output inspected before refund/address runs
+│              │  • Soft-failure (already_cancelled, not_found) → stops chain
 └──────┬───────┘
        │
        ▼
@@ -128,24 +130,68 @@ Turns are passed directly to Groq's user prompt so it can resolve references acr
 
 ---
 
-## 7. Safety & Guardrails
+## 7. Executor — State Validation Between Steps
 
-Three independent layers prevent unsafe actions:
+The executor (`agent/executor.py`) does more than just run tools in order — it validates the output of each step before allowing the next step to fire.
+
+### The Problem It Solves
+
+The LLM generates a complete plan upfront: `[cancel_order_item → execute_refund]`. If `cancel_order_item` returns a soft-failure (e.g. the item was already cancelled 5 minutes ago), a naive executor would blindly continue to `execute_refund` — issuing a refund for an item the customer is still going to receive.
+
+### Two Stop Conditions
+
+**Hard failure (exception):** Any unhandled exception in a tool stops execution immediately via `break`.
+
+**Soft failure (gate check):** After every `cancel_order_item` or `cancel_full_order`, the executor inspects the output dict before proceeding:
+
+```
+cancel_order_item → {already_cancelled: True}
+        │
+        ▼
+   Gate check: any failure key present?
+   (not_found, unauthorized, already_cancelled, error, success=False, cancelled_count=0)
+        │
+        YES → stop here, execute_refund never runs ✅
+```
+
+### Failure Keys That Trigger the Gate
+
+| Output key | Meaning |
+|---|---|
+| `already_cancelled: True` | Item was cancelled before this request |
+| `not_found: True` | Order or item doesn't exist |
+| `success: False` | Explicit failure from data store |
+| `cancelled_count: 0` | Full cancel found no active items |
+| `error: "..."` | Tool-level error string |
+
+### Result
+
+- Customer sends: *"Cancel item 1 and refund me"*
+- Item 1 was already cancelled → `cancel_order_item` returns `{already_cancelled: True}`
+- Gate fires → `execute_refund` is blocked
+- Synthesizer reads the `already_cancelled` output → tells the customer the item was already cancelled, no refund needed
+
+---
+
+## 8. Safety & Guardrails
+
+Four independent layers prevent unsafe actions:
 
 | Layer | What it catches | Where |
 |-------|----------------|-------|
 | Prompt injection scan | Jailbreak phrases ("ignore instructions", "act as", etc.) | `guardrail.py` — before LLM |
 | ₹25K escalation | Refund intent + extracted amount > threshold | `guardrail.py` — before LLM |
+| Executor gate check | Soft-failure cancel output blocks downstream refund | `executor.py` — between steps |
 | Tool-level cap | `execute_refund` rejects amount > config limit independently | `tools/payments.py` |
 
 Additionally:
 - **Ownership check** — order access verified against `customer_id` from session
 - **Template synthesis** — responses built only from tool output data, never from LLM free text → zero hallucination on factual fields (order ID, tracking number, amounts)
-- **Fail-fast executor** — stops on first tool error, no partial execution
+- **Fail-fast executor** — stops on first hard exception, no partial execution
 
 ---
 
-## 8. Observability — LangSmith
+## 9. Observability — LangSmith
 
 Every request is traced end-to-end in LangSmith (smith.langchain.com):
 
@@ -163,7 +209,7 @@ Locally, every request also emits structured JSON logs and appends to `audit.jso
 
 ---
 
-## 9. Data Layer
+## 10. Data Layer
 
 **`agent/cache.py`** — singleton `DataStore`:
 - Loads all JSON files from `data/` into memory on first import
@@ -179,7 +225,7 @@ Locally, every request also emits structured JSON logs and appends to `audit.jso
 
 ---
 
-## 10. Tools
+## 11. Tools
 
 All tools extend `TracedTool` (`tools/base.py`). The base class automatically records every call into `TraceContext`:
 
@@ -208,7 +254,7 @@ All tools extend `TracedTool` (`tools/base.py`). The base class automatically re
 
 ---
 
-## 11. Streaming
+## 12. Streaming
 
 `POST /query/stream` returns Server-Sent Events (SSE):
 
@@ -219,7 +265,7 @@ All tools extend `TracedTool` (`tools/base.py`). The base class automatically re
 
 ---
 
-## 12. Docker
+## 13. Docker
 
 ```
 Dockerfile          — 2-stage build: builder (gcc + pip install) → runtime (slim)
@@ -232,7 +278,7 @@ ChromaDB data and logs are mounted as named Docker volumes so they persist acros
 
 ---
 
-## 13. API Contract
+## 14. API Contract
 
 **POST /query**
 ```json

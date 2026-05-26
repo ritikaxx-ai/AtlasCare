@@ -60,11 +60,21 @@ class Executor:
             "greeting": greeting,
         }
 
+    # Tools whose soft-failure output must block downstream refund/address steps.
+    # If these return success=False (or a known failure key), execution stops.
+    _GATE_TOOLS = {"cancel_order_item", "cancel_full_order"}
+
+    # Keys in a tool output that indicate the action did not actually complete.
+    _FAILURE_KEYS = {"not_found", "unauthorized", "already_cancelled", "error"}
+
     def run_plan(self, plan: ExecutionPlan) -> None:
         """
-        Executes the plan sequentially.
-        If any tool fails, execution stops immediately (fail-fast).
-        All results and errors are captured in the trace context.
+        Executes the plan sequentially with output-based state validation.
+
+        Two stop conditions per step:
+          1. Exception raised → break immediately (hard failure).
+          2. Gate tool (cancel_*) returns a soft-failure output → break before
+             downstream refund/address steps fire, preventing phantom refunds.
         """
         trace_id = getattr(self.trace_ctx, "trace_id", "")
 
@@ -73,16 +83,27 @@ class Executor:
             if not tool_class:
                 raise ValueError(f"Unknown tool requested in plan: {step.tool}")
 
-            # Emit a live progress event before running the tool.
-            # This is a no-op for non-streaming requests (no queue registered).
             label = TOOL_LABELS.get(step.tool, f"Running {step.tool}...")
             emit_sync(trace_id, {"type": "tool_start", "tool": step.tool, "content": label})
 
             tool_instance = tool_class(self.trace_ctx)
             try:
-                # Call tool — automatically records telemetry in trace_ctx
-                tool_instance(**step.params)
+                result = tool_instance(**step.params)
             except Exception as e:
-                # Stop execution on first failure
                 print(f"Plan execution halted due to failure in {step.tool}: {e}")
                 break
+
+            # Gate check: if a cancellation step did not actually succeed,
+            # stop here — never run execute_refund on an un-cancelled item.
+            if step.tool in self._GATE_TOOLS:
+                output = result or {}
+                cancelled_count = output.get("cancelled_count", 1)
+                has_failure = (
+                    any(output.get(k) for k in self._FAILURE_KEYS)
+                    or output.get("success") is False
+                    or cancelled_count == 0
+                )
+                if has_failure:
+                    print(f"Plan execution halted: {step.tool} did not complete successfully — "
+                          f"downstream steps blocked to prevent inconsistent state.")
+                    break

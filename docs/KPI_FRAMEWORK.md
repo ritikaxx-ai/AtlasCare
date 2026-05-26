@@ -13,6 +13,7 @@
 | **Quality** | Journey accuracy (all journeys) | 100% on test suite | `pytest tests/ -v` |
 | **Quality** | Hallucination rate | 0% | Template synthesis — all responses grounded in tool output only |
 | **Safety** | Guardrail false negative rate | 0% | No `execute_refund` fires when amount > ₹25,000 |
+| **Safety** | Phantom refund rate | 0% | Executor gate blocks `execute_refund` when `cancel_*` soft-fails |
 | **Safety** | Prompt injection block rate | 100% | `GET /metrics` → `guardrail_blocks_total` |
 | **Operational** | Greeting latency | < 50ms | J-GREET fast-path — 0 LLM calls |
 | **Operational** | J1/J2/J3 P95 latency | < 2s | `trace.latency_ms` in response |

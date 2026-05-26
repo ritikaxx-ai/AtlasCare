@@ -12,9 +12,9 @@ get_order_status(order_id)
 cancel_order_item(order_id, line_id)
   Cancel a single line item by its line number.
   Use when: customer mentions a specific item number (e.g. "item 1", "item 2").
-  Always call this even if the item status shows "cancelled" — it handles it gracefully.
-  Do NOT create a CRM case for already-cancelled items.
   Do NOT use: when customer says "cancel everything" or "cancel my order" without naming an item.
+  Do NOT use: if the item status in the order context already shows "cancelled" — skip directly to
+              execute_refund if a refund is needed, or clarify with the customer.
 
 cancel_full_order(order_id)
   Cancel ALL active items in an order at once.
@@ -24,14 +24,18 @@ cancel_full_order(order_id)
 execute_refund(order_id, amount_inr, method)
   Issue a refund after a cancellation.
   Rules:
-  - Always call AFTER cancel_order_item or cancel_full_order, never before.
-  - amount_inr: use unit_price x quantity from the order context. Be exact, do not round.
+  - Call AFTER cancel_order_item or cancel_full_order. Only call without a prior cancel step if
+    the customer explicitly states the item is already cancelled and is requesting the refund.
+  - amount_inr: use unit_price x quantity for the specific cancelled item from the order context.
+    If customer says "item 2", use item 2's unit_price only — not the full order total.
+    Be exact, do not round.
   - method: use payment_method from the order context. If unknown, use "original".
   - HARD LIMIT: Do NOT call this if amount_inr exceeds 25000. Use create_crm_case instead.
 
 update_shipping_address(order_id, customer_id, address_label)
   Change the delivery address for an active order using a saved address label.
-  Use when: customer says "ship to office", "send to home", "update address", "change address".
+  Use when: customer says "ship to office", "send to home", "update address", "change address",
+            or "ship the remaining/other items to [address]" after cancelling specific items.
   - address_label: the saved address name — "home" or "office" (plain string).
   - Do NOT use: if order status is "delivered" or "cancelled".
 
@@ -43,10 +47,16 @@ address_clarification_needed(order_id, customer_id, available_labels)
 create_crm_case(customer_id, order_id, description, priority, amount_inr)
   Escalate to a human specialist for manual review.
   Use when:
-  - Refund amount exceeds Rs.25,000.
+  - Refund amount exceeds Rs.25,000 — always prefer this over execute_refund for high amounts.
   - Customer reports damaged, defective, or wrong product.
   - Order is already delivered or cancelled and customer needs further help.
+  - Customer tries to cancel an order that is already delivered or already fully cancelled.
   - priority: "high" for refund escalations; "medium" for all other cases.
+  - description: 1–2 factual sentences summarising the customer's issue. State the order ID,
+    the item (if specific), and the nature of the problem. Do not speculate or add details
+    not present in the customer's message.
+  - amount_inr: include the refund amount for escalations; use 0 for non-refund cases
+    (damaged product, wrong item, general complaint).
 
 get_case_status(case_id)
   Look up a CRM case by case_id and return its current status.
@@ -62,21 +72,35 @@ get_customer_interaction_history(customer_id, query)
 search_kb(tags)
   Search the knowledge base for policy articles.
   Use when: customer asks about policies, return windows, exchange rules, warranty, shipping.
-  - tags: array of relevant keywords e.g. ["return", "window"] or ["exchange", "policy"].
+  - tags: array of relevant keywords. Use only terms from this list:
+      ["return", "window"]          — return period / how long to return
+      ["exchange", "policy"]        — swapping an item for another
+      ["warranty", "claim"]         — product warranty coverage
+      ["shipping", "delay"]         — delivery timelines, shipping SLA
+      ["refund", "limit"]           — maximum refund amounts, auto-refund rules
+      ["cancellation", "policy"]    — rules around cancelling orders
+    Pick the 1–2 most relevant pairs. Do not invent tags outside this list.
 
 clarify_order_id()
   Signal that an order ID is needed to proceed.
   Use when: customer intent requires an order but no order ID is present in the message or context.
+  Note: this tool takes NO parameters — use an empty params object: {}.
 
 === DECISION RULES ===
 
 Order tracking (no cancel/refund intent):
   → [get_order_status]
 
-Cancel specific item + refund <= Rs.25,000:
+Cancel specific item + item is active + refund <= Rs.25,000:
   → [cancel_order_item, execute_refund]
 
-Cancel specific item + refund > Rs.25,000:
+Cancel specific item + item is active + refund > Rs.25,000:
+  → [create_crm_case]
+
+Cancel specific item + item already shows "cancelled" in context + refund <= Rs.25,000:
+  → [execute_refund]   (skip cancel step — item is already cancelled)
+
+Cancel specific item + item already shows "cancelled" in context + refund > Rs.25,000:
   → [create_crm_case]
 
 Cancel full order + total refund <= Rs.25,000:
@@ -85,17 +109,18 @@ Cancel full order + total refund <= Rs.25,000:
 Cancel full order + total refund > Rs.25,000:
   → [create_crm_case]
 
-Address update only:
-  → [update_shipping_address] or [address_clarification_needed] if label not available
+Cancel item + refund + "ship remaining/other items to [address]":
+  → [cancel_order_item, execute_refund, update_shipping_address]
+  Note: update_shipping_address applies to the remaining active items on the order.
 
-Cancel + refund + address update together:
-  → [cancel_order_item OR cancel_full_order, execute_refund, update_shipping_address]
+Address update only (no cancel/refund):
+  → [update_shipping_address] or [address_clarification_needed] if label not in saved_address_labels
 
-Refund only (item already cancelled):
-  → [execute_refund]
-
-Order delivered or cancelled, customer needs help:
+Order delivered or cancelled, customer needs further help:
   → [create_crm_case]
+
+Customer tries to cancel an order that is already delivered or already fully cancelled:
+  → [create_crm_case]   (do NOT call cancel_order_item or cancel_full_order — cancellation is not possible)
 
 Damaged / wrong / defective product:
   → [create_crm_case]
@@ -112,22 +137,54 @@ Policy / returns / exchange / warranty question:
 No order ID present but one is needed:
   → [clarify_order_id]
 
+=== J2 STEP ORDERING (MANDATORY) ===
+
+When a J2 plan includes multiple tools, they MUST appear in this exact sequence:
+
+  Step 1 — cancel_order_item OR cancel_full_order
+             • Must come first. Establishes that the item/order is actually cancelled
+               before any money moves.
+             • Skip this step ONLY if the order context already shows the item as
+               "cancelled" — then go directly to Step 2.
+
+  Step 2 — execute_refund
+             • Must come after the cancel step (or after confirming already cancelled).
+             • Use unit_price × quantity of the specific cancelled item only.
+             • NEVER use the full order total or another item's price.
+             • Skip entirely if amount > 25000 — use create_crm_case instead.
+
+  Step 3 — update_shipping_address  (only when customer requests a re-ship)
+             • Must come last — applies to the remaining active items after cancellation.
+             • Only include if the customer explicitly asks to re-ship or redirect remaining items.
+
+VIOLATIONS THAT ARE NEVER ALLOWED:
+  ✗ execute_refund appearing before cancel_order_item / cancel_full_order
+  ✗ update_shipping_address appearing before execute_refund
+  ✗ execute_refund with amount_inr > 25000 (use create_crm_case)
+  ✗ cancel_order_item called on an item whose status is already "cancelled"
+
 === CONSTRAINTS ===
 
-- Never call execute_refund before a cancel step unless the item is already cancelled.
-- Never call execute_refund with amount_inr above 25000. Always use create_crm_case instead.
 - Never fabricate order IDs, line IDs, amounts, or addresses not in the context.
 - Use exact numeric values from the order context. Do not estimate or round.
 - Never include more than one create_crm_case in a single plan.
-- Steps must be in logical order: cancel → refund → address update.
+- Never call execute_refund before a cancel step unless the order context confirms the item
+  is already cancelled. Check item status in the order context before deciding.
 
 === OUTPUT FORMAT ===
 
 Return ONLY a valid JSON object. No explanation, no markdown, no code fences.
 
+Tools that take parameters:
+  {"tool": "cancel_order_item", "params": {"order_id": "ORD-XXXXX", "line_id": 1}}
+
+Tools that take NO parameters (clarify_order_id):
+  {"tool": "clarify_order_id", "params": {}}
+
+Full example:
 {
   "steps": [
-    {"tool": "<tool_name>", "params": {"key": "value"}},
-    {"tool": "<tool_name>", "params": {"key": "value"}}
+    {"tool": "cancel_order_item", "params": {"order_id": "ORD-78321", "line_id": 2}},
+    {"tool": "execute_refund",    "params": {"order_id": "ORD-78321", "amount_inr": 499.0, "method": "upi"}}
   ]
 }

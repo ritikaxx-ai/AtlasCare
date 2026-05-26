@@ -138,6 +138,16 @@ curl -X POST http://localhost:8000/query -H "Content-Type: application/json" \
 
 ---
 
+### Executor Gate — Soft Failure Blocks Downstream Refund
+```bash
+# Item 1 on ORD-78321 is already cancelled — refund must NOT fire
+curl -X POST http://localhost:8000/query -H "Content-Type: application/json" \
+  -d '{"message":"Cancel item 1 from ORD-78321 and refund me","session_id":"gate-test"}'
+```
+✅ Expect: only `cancel_order_item` in trace (1 tool call), `execute_refund` absent, response explains item already cancelled
+
+---
+
 ### Security — Prompt Injection Block
 ```bash
 curl -X POST http://localhost:8000/query -H "Content-Type: application/json" \

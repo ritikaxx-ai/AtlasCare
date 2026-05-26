@@ -48,6 +48,7 @@ class execute_refund(TracedTool):
     """Execute refund — Layer 3 hard safety cap + retry + structured logging."""
 
     def _execute(self, order_id: str, amount_inr: float, method: str, **kwargs) -> Dict[str, Any]:
+        amount_inr = float(amount_inr)  # coerce string "499.0" → float (LLM may return strings)
         data_store = get_data_store()
         config = data_store.get_payment_config()
         limit = config["auto_refund_limit_inr"]
