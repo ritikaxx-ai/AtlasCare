@@ -177,6 +177,63 @@ _POLICY_KEYWORDS = (
 )
 
 
+# Dictionary of words that are purely social/greeting — no support intent.
+# We tokenise the message and check that EVERY token is in this set.
+# This handles combos like "Thankyou, Bye" or "Hi! Good morning." naturally.
+_GREETING_WORDS = {
+    # Hellos
+    "hi", "hello", "hey", "hiya", "howdy", "greetings", "sup", "yo",
+    # Good <time>
+    "good", "morning", "afternoon", "evening", "night", "day",
+    # Thanks
+    "thank", "thankyou", "thanks", "thx", "ty", "you", "u",
+    # Acknowledgements
+    "ok", "okay", "sure", "noted", "got", "it", "alright", "right",
+    # Goodbyes
+    "bye", "goodbye", "cya", "later", "see", "take", "care", "farewell",
+    # Positive filler
+    "great", "awesome", "perfect", "wonderful", "nice", "cool", "sounds",
+    # Yes / No
+    "yes", "no", "yep", "nope", "nah", "yup", "yeah",
+    # Pleasantries
+    "welcome", "please", "sorry", "excuse", "me", "pardon",
+}
+
+# Words that signal real support intent — even inside an otherwise greeting-y message.
+# "hi cancel my order" → "cancel" is here → NOT a greeting.
+_SUPPORT_INTENT_WORDS = {
+    "order", "cancel", "refund", "track", "status", "address", "deliver",
+    "return", "exchange", "warranty", "policy", "case", "item", "product",
+    "payment", "ship", "shipping", "damaged", "wrong", "missing", "lost",
+    "where", "when", "how", "what", "why", "help", "issue", "problem",
+}
+
+
+def is_greeting(message: str) -> bool:
+    """
+    Return True if the message is purely social/greeting with no support intent.
+
+    Strategy:
+    1. Tokenise (strip punctuation, lowercase, split on whitespace).
+    2. If any token is a known support-intent word → False immediately.
+    3. If every token is in the greeting-words dictionary → True.
+    4. Otherwise → False (let Groq handle it).
+    """
+    # Strip punctuation and normalise
+    cleaned = re.sub(r"[^\w\s]", " ", message.lower())
+    tokens = [t for t in cleaned.split() if t]
+
+    if not tokens:
+        return False  # empty message → let Groq handle
+
+    # Hard veto: any support-intent word present → definitely not a greeting
+    if any(t in _SUPPORT_INTENT_WORDS for t in tokens):
+        return False
+
+    # Soft check: all tokens must be in the greeting dictionary
+    return all(t in _GREETING_WORDS for t in tokens)
+
+
 def needs_customer_history(message: str) -> bool:
     msg = message.lower()
     return any(k in msg for k in _HISTORY_KEYWORDS)
@@ -691,6 +748,28 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             parts.append("\n".join(lines))
 
         # ── Clarification sentinels ───────────────────────────────────────
+        elif name == "greeting":
+            msg = message.lower()
+            if any(w in msg for w in ("thank", "thanks", "thx", "ty")):
+                parts.append(
+                    "You're welcome! 😊 Is there anything else I can help you with?\n"
+                    "I'm here for order tracking, cancellations, refunds, or any policy questions."
+                )
+            elif any(w in msg for w in ("bye", "goodbye", "see you", "take care")):
+                parts.append(
+                    "Goodbye! Have a great day! 👋\n"
+                    "Feel free to reach out anytime if you need help with your orders."
+                )
+            else:
+                parts.append(
+                    "Hello! Welcome to AtlasCare Support. 👋\n"
+                    "How can I help you today? I can assist with:\n"
+                    "• Order tracking & status\n"
+                    "• Cancellations & refunds\n"
+                    "• Delivery address updates\n"
+                    "• Return & exchange policies"
+                )
+
         elif name == "clarify_order_id":
             parts.append(
                 "I'd love to help you with that!\n"

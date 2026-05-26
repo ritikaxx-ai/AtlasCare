@@ -97,6 +97,13 @@ class blocked_injection(TracedTool):
         return {"injection_blocked": True}
 
 
+class greeting(TracedTool):
+    """No-op sentinel returned for greetings / chitchat — zero LLM calls."""
+
+    def _execute(self, **kwargs) -> Dict[str, Any]:
+        return {"is_greeting": True}
+
+
 class address_clarification_needed(TracedTool):
     """
     Sentinel returned when the customer asks to update their shipping address

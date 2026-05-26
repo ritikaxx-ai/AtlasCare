@@ -53,7 +53,7 @@ def update_session(
         session = _sessions.setdefault(session_id, _empty_session())
         session["turns"].append((user_message, agent_response))
         # Keep last 5 exchanges (10 messages)
-        session["turns"] = session["turns"][-5:]
+        session["turns"] = session["turns"][-10:]
         if order_id:
             session["last_order_id"] = order_id
         if case_id:

@@ -366,24 +366,16 @@ async def query_stream(request: QueryRequest):  # noqa: C901
             result.get("response", ""),
         )
 
-        # Stream the final response line-by-line.
-        # Root cause of buffering: uvicorn / OS TCP coalesces small SSE chunks
-        # and flushes them all at once when the generator finishes, regardless
-        # of asyncio.sleep calls.  The reliable fix is to pad each SSE event
-        # past the OS socket-send-buffer threshold (~4 KB) so it MUST be sent
-        # immediately as its own TCP segment.
-        # We use an SSE comment line (starts with ':') which the browser SSE
-        # spec says to ignore — so the JS parser skips it cleanly.
-        _PAD = ": " + "p" * 4096 + "\n\n"   # ~4 KB flush-pad per event
-
+        # Send the full response text + trace in a single "done" event.
+        # The client does a smooth typewriter animation client-side, which is
+        # more reliable than server-side line-by-line streaming (which fights
+        # TCP coalescing and browser read() buffering).
+        _PAD = ": " + "p" * 4096 + "\n\n"   # ~4 KB flush-pad — forces TCP flush
         response_text = result.get("response", "")
-        lines = response_text.split("\n")
-        for i, line in enumerate(lines):
-            content = line if i == 0 else "\n" + line
-            yield f"data: {json.dumps({'type': 'token', 'content': content})}\n\n{_PAD}"
-            await asyncio.sleep(0.18 if line.strip() else 0.08)
-
-        yield f"data: {json.dumps({'type': 'done', 'journey_type': result.get('journey_type', ''), 'trace': result.get('trace', {})})}\n\n"
+        yield (
+            f"data: {json.dumps({'type': 'done', 'content': response_text, 'journey_type': result.get('journey_type', ''), 'trace': result.get('trace', {})})}\n\n"
+            + _PAD
+        )
 
     return StreamingResponse(
         event_generator(),

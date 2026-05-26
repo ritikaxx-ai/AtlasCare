@@ -1,5 +1,8 @@
 """
-Groq-based agent for J2 compound planning — direct REST API calls via httpx.
+Groq-based intent agent — single LLM call that decides which tools to call for ANY journey.
+Replaces the old J2-only conductor. The prompt (system_conductor.txt) lists every available
+tool so the LLM can handle tracking, cancel/refund, address, policy, history, case status
+all in one shot.
 """
 import asyncio
 import json
@@ -26,15 +29,39 @@ def _load_prompt(filename: str) -> str:
         return f.read()
 
 
-def _build_user_prompt(message: str, order_context: Optional[dict]) -> str:
-    """Build the full user prompt with order context injected."""
-    lines = [f"Customer Message: {message}"]
+def _build_user_prompt(
+    message: str,
+    order_context: Optional[dict] = None,
+    customer_id: Optional[str] = None,
+    case_id: Optional[str] = None,
+    recent_turns: Optional[list] = None,
+) -> str:
+    """Build the user prompt with all available context injected."""
+    lines = []
+
+    # Inject recent conversation turns so Groq understands references like
+    # "cancel it", "same order", "what about the refund?" across turns.
+    if recent_turns:
+        lines.append("=== Recent Conversation ===")
+        for user_msg, agent_resp in recent_turns:
+            lines.append(f"Customer: {user_msg}")
+            lines.append(f"Agent: {agent_resp[:120]}")  # trim long responses
+        lines.append("=== End of Conversation ===\n")
+
+    lines.append(f"Customer Message: {message}")
+
+    if customer_id:
+        lines.append(f"\nCustomer ID: {customer_id}")
+
+    if case_id:
+        lines.append(f"Case ID: {case_id}")
+
     if order_context:
         lines.append("\nOrder Context (use these exact values for tool params):")
         lines.append(f"  order_id:        {order_context.get('order_id', 'unknown')}")
         lines.append(f"  status:          {order_context.get('status', 'unknown')}")
         lines.append(f"  payment_method:  {order_context.get('payment_method', 'original')}")
-        lines.append(f"  customer_id:     {order_context.get('customer_id', 'unknown')}")
+        lines.append(f"  customer_id:     {order_context.get('customer_id', customer_id or 'unknown')}")
         saved_labels = []
         for addr_key, label in (("home_address", "home"), ("office_address", "office")):
             if order_context.get(addr_key):
@@ -65,7 +92,12 @@ def _parse_plan(content: str) -> ExecutionPlan:
 
 
 async def generate_plan_llm(
-    message: str, order_context: Optional[dict] = None, trace_id: Optional[str] = None
+    message: str,
+    order_context: Optional[dict] = None,
+    trace_id: Optional[str] = None,
+    customer_id: Optional[str] = None,
+    case_id: Optional[str] = None,
+    recent_turns: Optional[list] = None,
 ) -> ExecutionPlan:
     """Groq REST API planning for J2 — direct HTTP call, no SDK.
 
@@ -77,7 +109,7 @@ async def generate_plan_llm(
     metrics = get_metrics_collector()
     start = time.perf_counter()
     system_prompt = _load_prompt("system_conductor.txt")
-    user_prompt = _build_user_prompt(message, order_context)
+    user_prompt = _build_user_prompt(message, order_context, customer_id, case_id, recent_turns)
 
     log.info({"event": "llm_call_start", "model": GROQ_MODEL,
               "operation": "planning_groq_api"})

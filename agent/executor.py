@@ -23,6 +23,7 @@ from tools.oms import (
     clarify_customer_id,
     blocked_injection,
     address_clarification_needed,
+    greeting,
 )
 from tools.crm import (
     get_customer_profile,
@@ -56,6 +57,7 @@ class Executor:
             "search_kb": search_kb,
             "execute_refund": execute_refund,
             "address_clarification_needed": address_clarification_needed,
+            "greeting": greeting,
         }
 
     def run_plan(self, plan: ExecutionPlan) -> None:

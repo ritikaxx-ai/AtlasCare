@@ -2,16 +2,16 @@
 LangGraph orchestration for AtlasCare v3.0.
 
 Flow:
-  guardrail → router → [fast_plan | llm_plan] → executor → synthesize → END
+  guardrail → intent (single LLM) → executor → synthesize → END
 
-J1/J3: deterministic plan + template synthesis (0 LLM calls, sub-second tools)
-J2:    Pydantic AI planning + template synthesis (1 LLM call)
+Guardrail handles hard rules (injection block, ₹25K escalation) with zero LLM calls.
+Intent node: one Groq call decides which tools to call for any message.
 """
 import asyncio
 import time
 import uuid
 from datetime import datetime, timezone
-from typing import Literal, Optional
+from typing import Optional
 
 from langgraph.graph import END, StateGraph
 
@@ -23,18 +23,18 @@ from agent.audit import (
     log_prompt_injection, log_request_completed,
 )
 from agent.fast_paths import (
-    classify_journey_for_routing,
     build_j1_plan,
     build_j3_plan,
     build_j4_plan,
     build_j5_plan,
     build_kb_plan,
     try_build_j2_plan,
+    needs_policy_lookup,
+    needs_customer_history,
+    is_case_status_query,
+    is_greeting,
     synthesize_from_trace,
     extract_order_id,
-    extract_case_id,
-    extract_customer_id,
-    _ownership_plan,
 )
 from agent.pydantic_agents import generate_plan_llm
 from agent.executor import Executor
@@ -114,201 +114,168 @@ def _guardrail_node(state: AgentState) -> AgentState:
     return state
 
 
-# ─── Node 2: Router ──────────────────────────────────────────────────────────
-# Classifies the message into a journey type (J1–J5, J-KB) and resolves any order/case
-# IDs from session memory (so "cancel it" works without repeating the order ID).
-# J2 uses the LLM planner (Gemini via pydantic_agents.py + system_conductor.txt).
-# All other journeys use the deterministic fast path (0 LLM calls).
-def _router_node(state: AgentState) -> AgentState:
-    action = state["guardrail"]["action"]
-    session_id = state["session_id"]
-    message = state["message"]
-    trace_id = state["trace_id"]
 
-    # Injection was caught in guardrail — short-circuit routing
-    if action == "INJECTION":
-        state["journey_type"] = "J-BLOCKED"
-        state["use_llm_plan"] = False
-        log.info({"event": "router_blocked_injection", "trace_id": trace_id})
-        return state
-
-    # --- Resolve entities from session memory ---
-    state["resolved_order_id"] = resolve_order_id(session_id, message)
-    state["resolved_case_id"] = resolve_case_id(session_id, message)
-
-    state["journey_type"] = classify_journey_for_routing(
-        message, action, resolved_order_id=state.get("resolved_order_id")
-    )
-
-    log.info({
-        "event": "journey_classified",
-        "trace_id": trace_id,
-        "session_id": session_id,
-        "journey_type": state["journey_type"],
-        "resolved_order_id": state.get("resolved_order_id"),
-        "resolved_case_id": state.get("resolved_case_id"),
-    })
-
-    # J2 (cancel / refund / address) → Gemini plans which tools to call.
-    # All other journeys → deterministic fast path (0 LLM calls).
-    state["use_llm_plan"] = (state["journey_type"] == "J2")
-    return state
-
-
-# Conditional edge function: LangGraph calls this after the router to decide
-# which planning node to execute next. Returns "fast_plan" or "llm_plan".
-def _route_after_router(state: AgentState) -> Literal["fast_plan", "llm_plan"]:
-    return "llm_plan" if state.get("use_llm_plan") else "fast_plan"
-
-
-# ─── Node 3a: Fast Plan ──────────────────────────────────────────────────────
-# Deterministic planner — no LLM call, zero extra latency.
-# Reads the journey_type set by the router and calls the matching build_jN_plan()
-# function from fast_paths.py. Each function returns an ExecutionPlan (a list of
-# tool steps). The plan is serialised into state["plan"] for the executor.
-def _fast_plan_node(state: AgentState) -> AgentState:
-    journey = state["journey_type"]
-    resolved_order_id = state.get("resolved_order_id")
-    resolved_case_id = state.get("resolved_case_id")
-    trace_id = state["trace_id"]
-
-    # Injection blocked — return safe canned response via sentinel tool
-    if journey == "J-BLOCKED":
-        plan = ExecutionPlan(steps=[PlanStep(tool="blocked_injection", params={})])
-        state["plan"] = plan.model_dump()
-        return state
-
-    if journey == "J1":
-        plan = build_j1_plan(state["message"], state.get("customer_id"), resolved_order_id)
-    elif journey == "J2":
-        if not resolved_order_id:
-            plan = ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
-        else:
-            plan = try_build_j2_plan(state["message"], state.get("customer_id"), resolved_order_id)
-            if plan is None:
-                plan = ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
-    elif journey == "J4":
-        plan = build_j4_plan(state["message"], state.get("customer_id"))
-    elif journey == "J5":
-        plan = build_j5_plan(state["message"], state.get("customer_id"), resolved_case_id)
-    elif journey == "J-KB":
-        plan = build_kb_plan(state["message"])
-    else:
-        g = state["guardrail"]
-        plan = build_j3_plan(
-            state["message"],
-            g.get("reason", ""),
-            g.get("extracted_amount"),
-            resolved_order_id,
-        )
-
-    tools_planned = [s["tool"] for s in plan.model_dump().get("steps", [])]
-    log.info({
-        "event": "plan_created",
-        "trace_id": trace_id,
-        "journey_type": journey,
-        "tools_planned": tools_planned,
-        "planner": "fast_path",
-    })
-    state["plan"] = plan.model_dump()
-    return state
-
-
-# ─── Node 3b: LLM Plan ───────────────────────────────────────────────────────
-# Pydantic AI planner — invoked only when use_llm_plan=True (J2 journeys).
-# Builds an order context dict, calls Gemini 2.5 Flash via generate_plan_llm(), and
-# stores the resulting ExecutionPlan in state["plan"].
-# Falls back to the deterministic fast path on any LLM error so the user always
-# gets a response rather than a 500.
-async def _llm_plan_node(state: AgentState) -> AgentState:
+# ─── Node 3: Intent LLM ──────────────────────────────────────────────────────
+# Single Groq call that decides which tools to call for ANY journey.
+# The prompt (system_conductor.txt) lists every available tool — get_order_status,
+# cancel_order_item, execute_refund, search_kb, get_customer_interaction_history, etc.
+# The LLM outputs a steps[] plan. No separate router or journey classifier needed.
+# Guardrail hard-rules (injection, ₹25K escalation) bypass this node entirely.
+# Fallback: if Groq fails, falls back to deterministic fast-path planners.
+async def _intent_node(state: AgentState) -> AgentState:
     from agent.cache import get_data_store
 
     trace_id = state.get("trace_id")
-    order_id = state.get("resolved_order_id")
+    message = state["message"]
+    customer_id = state.get("customer_id")
+    guardrail = state["guardrail"]
+
+    # ── Hard-rule bypass: injection ───────────────────────────────────────────
+    if guardrail.get("action") == "INJECTION":
+        state["journey_type"] = "J-BLOCKED"
+        state["plan"] = ExecutionPlan(steps=[PlanStep(tool="blocked_injection", params={})]).model_dump()
+        log.info({"event": "intent_blocked_injection", "trace_id": trace_id})
+        return state
+
+    # ── Hard-rule bypass: high-value escalation (₹25K guardrail) ─────────────
+    if guardrail.get("action") == "ESCALATE":
+        resolved_order_id = resolve_order_id(state["session_id"], message)
+        state["resolved_order_id"] = resolved_order_id
+        state["journey_type"] = "J3"
+        plan = build_j3_plan(
+            message, guardrail.get("reason", ""),
+            guardrail.get("extracted_amount"), resolved_order_id,
+        )
+        state["plan"] = plan.model_dump()
+        log.info({"event": "intent_escalated", "trace_id": trace_id, "source": "guardrail"})
+        return state
+
+    # ── Fast-path: greetings / chitchat (no LLM call needed) ─────────────────
+    if is_greeting(message):
+        state["journey_type"] = "J-GREET"
+        state["plan"] = ExecutionPlan(steps=[PlanStep(tool="greeting", params={})]).model_dump()
+        log.info({"event": "intent_greeting_fastpath", "trace_id": trace_id})
+        return state
+
+    # ── Resolve entities from session memory ──────────────────────────────────
+    resolved_order_id = resolve_order_id(state["session_id"], message)
+    resolved_case_id = resolve_case_id(state["session_id"], message)
+    state["resolved_order_id"] = resolved_order_id
+    state["resolved_case_id"] = resolved_case_id
+
+    # ── Build order context (if an order ID is known) ─────────────────────────
     order_context = None
+    if resolved_order_id:
+        try:
+            order = get_data_store().get_order(resolved_order_id)
+            if order:
+                cid = order.get("customer_id") or customer_id
+                home_address, office_address = None, None
+                if cid:
+                    for label in ("home", "office"):
+                        try:
+                            addr = get_data_store().get_customer_address(cid, label)
+                            if label == "home":
+                                home_address = addr
+                            else:
+                                office_address = addr
+                        except Exception:
+                            pass
+                order_context = {
+                    "order_id": resolved_order_id,
+                    "status": order.get("status"),
+                    "payment_method": order.get("payment_method", "original"),
+                    "customer_id": cid,
+                    "home_address": home_address,
+                    "office_address": office_address,
+                    "items": [
+                        {"line_id": i["line_id"], "name": i["name"],
+                         "unit_price": i["unit_price"], "quantity": i.get("quantity", 1),
+                         "status": i["status"]}
+                        for i in order.get("items", [])
+                    ],
+                }
+        except Exception:
+            pass
 
-    if order_id:
-        order = get_data_store().get_order(order_id)
-        if order:
-            # Fetch all saved addresses for the customer (best-effort).
-            # Pass both home and office so Gemini can pick the right one.
-            cid = order.get("customer_id") or state.get("customer_id")
-            home_address = None
-            office_address = None
-            if cid:
-                for label, key in [("home", "home_address"), ("office", "office_address")]:
-                    try:
-                        addr = get_data_store().get_customer_address(cid, label)
-                        if label == "home":
-                            home_address = addr
-                        else:
-                            office_address = addr
-                    except Exception:
-                        pass
+    # ── Fetch recent conversation turns for Groq context ─────────────────────
+    # Last 10 (user, agent) pairs from this session so Groq understands
+    # references like "cancel it", "the same order", "what about the refund?"
+    # without the customer repeating context every turn.
+    recent_turns = get_recent_turns(state["session_id"], n=10)
 
-            order_context = {
-                "order_id": order_id,
-                "status": order.get("status"),
-                "payment_method": order.get("payment_method", "original"),
-                "customer_id": order.get("customer_id"),
-                "home_address": home_address,
-                "office_address": office_address,
-                "items": [
-                    {
-                        "line_id": i["line_id"],
-                        "name": i["name"],
-                        "unit_price": i["unit_price"],
-                        "quantity": i.get("quantity", 1),
-                        "status": i["status"],
-                    }
-                    for i in order.get("items", [])
-                ],
-            }
-
+    # ── Single LLM call: decide tool plan ────────────────────────────────────
     try:
         plan = await generate_plan_llm(
-            state["message"], order_context=order_context, trace_id=trace_id
+            message,
+            order_context=order_context,
+            trace_id=trace_id,
+            customer_id=customer_id,
+            case_id=resolved_case_id,
+            recent_turns=recent_turns,
         )
-        tools_planned = [s.tool for s in plan.steps]
+        # Infer journey_type from the first tool in the plan
+        state["journey_type"] = _infer_journey(plan)
         log.info({
             "event": "plan_created",
             "trace_id": trace_id,
             "journey_type": state["journey_type"],
-            "tools_planned": tools_planned,
-            "planner": "llm",
+            "tools_planned": [s.tool for s in plan.steps],
+            "planner": "intent_llm",
         })
         state["plan"] = plan.model_dump()
 
     except Exception as exc:
-        # LLM failed — log the real error and fall back to deterministic planning
-        # so the user still gets a helpful response instead of a 500.
-        log.error({
-            "event": "llm_plan_failed",
-            "trace_id": trace_id,
-            "error": str(exc),
-            "error_type": type(exc).__name__,
-            "fallback": "fast_path",
-        })
-        # Reuse the same fast-path logic as _fast_plan_node for J2
-        if not order_id:
-            fallback_plan = ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
-        else:
-            fallback_plan = try_build_j2_plan(
-                state["message"], state.get("customer_id"), order_id
-            )
-            if fallback_plan is None:
-                fallback_plan = ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
-
-        log.info({
-            "event": "plan_created",
-            "trace_id": trace_id,
-            "journey_type": state["journey_type"],
-            "tools_planned": [s.tool for s in fallback_plan.steps],
-            "planner": "fast_path_fallback",
-        })
-        state["plan"] = fallback_plan.model_dump()
+        log.error({"event": "intent_llm_failed", "trace_id": trace_id,
+                   "error": str(exc), "fallback": "fast_path"})
+        # Fallback: use deterministic planners
+        plan = _deterministic_fallback(message, customer_id, resolved_order_id, resolved_case_id)
+        state["journey_type"] = _infer_journey(plan)
+        state["plan"] = plan.model_dump()
 
     return state
+
+
+def _infer_journey(plan: ExecutionPlan) -> str:
+    """Infer journey type from the first tool in the plan."""
+    tool_to_journey = {
+        "get_order_status": "J1",
+        "cancel_order_item": "J2", "cancel_full_order": "J2",
+        "execute_refund": "J2", "update_shipping_address": "J2",
+        "address_clarification_needed": "J2",
+        "create_crm_case": "J3",
+        "get_customer_interaction_history": "J4",
+        "get_case_status": "J5",
+        "search_kb": "J-KB",
+        "clarify_order_id": "J1",
+        "blocked_injection": "J-BLOCKED",
+        "greeting": "J-GREET",
+    }
+    if plan.steps:
+        return tool_to_journey.get(plan.steps[0].tool, "J2")
+    return "J2"
+
+
+def _deterministic_fallback(
+    message: str, customer_id: Optional[str],
+    resolved_order_id: Optional[str], resolved_case_id: Optional[str]
+) -> ExecutionPlan:
+    """Regex-based fallback when LLM fails."""
+    from agent.fast_paths import (
+        needs_policy_lookup, needs_customer_history, is_case_status_query
+    )
+    if is_case_status_query(message):
+        return build_j5_plan(message, customer_id, resolved_case_id)
+    if needs_customer_history(message):
+        return build_j4_plan(message, customer_id)
+    if needs_policy_lookup(message):
+        return build_kb_plan(message)
+    if resolved_order_id:
+        j2 = try_build_j2_plan(message, customer_id, resolved_order_id)
+        if j2:
+            return j2
+        return build_j1_plan(message, customer_id, resolved_order_id)
+    return ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
 
 
 # ─── Node 4: Executor ────────────────────────────────────────────────────────
@@ -342,22 +309,15 @@ def _synthesize_node(state: AgentState) -> AgentState:
 def create_atlascare_graph():
     graph = StateGraph(AgentState)
 
+    # Simplified pipeline: guardrail → intent (single LLM) → executor → synthesize
     graph.add_node("guardrail", _guardrail_node)
-    graph.add_node("router", _router_node)
-    graph.add_node("fast_plan", _fast_plan_node)
-    graph.add_node("llm_plan", _llm_plan_node)
+    graph.add_node("intent", _intent_node)
     graph.add_node("executor", _executor_node)
     graph.add_node("synthesize", _synthesize_node)
 
     graph.set_entry_point("guardrail")
-    graph.add_edge("guardrail", "router")
-    graph.add_conditional_edges(
-        "router",
-        _route_after_router,
-        {"fast_plan": "fast_plan", "llm_plan": "llm_plan"},
-    )
-    graph.add_edge("fast_plan", "executor")
-    graph.add_edge("llm_plan", "executor")
+    graph.add_edge("guardrail", "intent")
+    graph.add_edge("intent", "executor")
     graph.add_edge("executor", "synthesize")
     graph.add_edge("synthesize", END)
 
@@ -407,6 +367,7 @@ async def run_query(
         "use_llm_plan": False,
         "resolved_order_id": None,
         "resolved_case_id": None,
+        "resolved_line_id": None,
     }
 
     # Register the SSE queue so nodes can push live events during execution.
@@ -428,7 +389,8 @@ async def run_query(
 
     journey_type = final_state["journey_type"]
     num_tools = len(trace_data.get("tool_calls", []))
-    num_llm = 1 if final_state.get("use_llm_plan") else 0
+    # Intent node always makes 1 LLM call unless bypassed by hard-rules (injection/escalation)
+    num_llm = 0 if final_state.get("journey_type") in ("J-BLOCKED", "J3", "J-GREET") else 1
 
     metrics = get_metrics_collector()
     llm_slice = metrics.llm_metrics[-num_llm:] if num_llm else []

@@ -896,6 +896,28 @@
       "amount_inr": 55000.0,
       "trace_id": "trc-8f4fddc7",
       "created_at": "2026-05-25T11:38:02.795091+00:00"
+    },
+    {
+      "case_id": "CASE-D96A2B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78450",
+      "status": "open",
+      "priority": "medium",
+      "description": "Customer wants to cancel an already cancelled order",
+      "amount_inr": "0.0",
+      "trace_id": "trc-b5700003",
+      "created_at": "2026-05-26T06:28:40.257275+00:00"
+    },
+    {
+      "case_id": "CASE-8530F7",
+      "customer_id": "CUST-002",
+      "order_id": "ORD-78100",
+      "status": "open",
+      "priority": "high",
+      "description": "Damaged product received",
+      "amount_inr": "3498.0",
+      "trace_id": "trc-b86eec9d",
+      "created_at": "2026-05-26T09:18:25.393987+00:00"
     }
   ]
 }

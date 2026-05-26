@@ -27,3 +27,4 @@ class AgentState(TypedDict, total=False):
     # "cancel it" without repeating the order ID they mentioned two turns ago.
     resolved_order_id: Optional[str]
     resolved_case_id: Optional[str]
+    resolved_line_id: Optional[int]   # item/line number extracted by LLM router

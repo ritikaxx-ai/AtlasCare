@@ -218,14 +218,94 @@ async function sendQueryStreaming(message, bubbleEl) {
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
-  let fullText = '';
   let loadingHidden = false;
-  let firstChunkTime = null;
-  const STREAM_TIMEOUT_MS = 8000; // if no token in 8s, proxy is buffering — fall back
+  const STREAM_TIMEOUT_MS = 8000; // if no data in 8s, proxy buffering — fall back
 
+  // ── Typewriter animation state ──────────────────────────────────────────
+  // The server sends the full response text in the `done` event.
+  // We animate it here, character by character, so streaming looks smooth
+  // regardless of how fast the server responds or how the browser buffers chunks.
+  let targetText = '';      // full text to animate toward
+  let displayedLen = 0;     // how many chars are currently shown
+  let animTimer = null;     // setTimeout handle
+  const CHARS_PER_TICK = 4; // characters rendered per tick
+  const TICK_MS = 18;       // ~55 ticks/s → ~220 chars/s
+
+  function animateTick() {
+    if (displayedLen >= targetText.length) { animTimer = null; return; }
+    displayedLen = Math.min(displayedLen + CHARS_PER_TICK, targetText.length);
+    const isFinished = displayedLen >= targetText.length;
+    bubbleEl.innerHTML = renderMarkdown(targetText.slice(0, displayedLen))
+      + (isFinished ? '' : '<span class="cursor">▋</span>');
+    scrollChatToBottom();
+    if (!isFinished) animTimer = setTimeout(animateTick, TICK_MS);
+    else animTimer = null;
+  }
+
+  function startAnimation(text) {
+    targetText = text;
+    displayedLen = 0;
+    if (animTimer) clearTimeout(animTimer);
+    animateTick();
+  }
+
+  // ── SSE parsing helper ───────────────────────────────────────────────────
+  function processChunk(chunk) {
+    buffer += chunk;
+    // Split on the SSE event boundary. Each event ends with \n\n.
+    // We keep any incomplete trailing part in buffer for next chunk.
+    const parts = buffer.split('\n\n');
+    buffer = parts.pop(); // last item may be incomplete
+
+    for (const raw of parts) {
+      // Find the data line (skip SSE comment lines starting with ':')
+      const dataLine = raw.split('\n').find(l => l.startsWith('data: '));
+      if (!dataLine) continue;
+
+      let evt;
+      try { evt = JSON.parse(dataLine.slice(6)); } catch { continue; }
+
+      if (evt.type === 'thinking') {
+        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
+        setStatusLine(bubbleEl, evt.content, 'thinking');
+
+      } else if (evt.type === 'tool_start') {
+        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
+        setStatusLine(bubbleEl, evt.content, 'tool');
+
+      } else if (evt.type === 'token') {
+        // Legacy: server-sent individual tokens (kept for compatibility)
+        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
+        clearStatusLine(bubbleEl);
+        targetText += evt.content;
+        if (!animTimer) animateTick();
+
+      } else if (evt.type === 'done') {
+        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
+        clearStatusLine(bubbleEl);
+        // Start typewriter animation for the full response text
+        const fullResponse = evt.content || targetText;
+        startAnimation(fullResponse);
+        // Wait for animation to finish, then finalise
+        const waitForAnim = () => {
+          if (animTimer) { setTimeout(waitForAnim, 50); return; }
+          bubbleEl.innerHTML = renderMarkdown(targetText);
+          saveTrace(evt.trace, message);
+          maybeRefreshOrders(evt.trace);
+        };
+        setTimeout(waitForAnim, 50);
+
+      } else if (evt.type === 'error') {
+        throw new Error(evt.message);
+      }
+    }
+  }
+
+  // ── Read loop ────────────────────────────────────────────────────────────
   while (true) {
-    // Apply timeout only while waiting for the first token
     let readPromise = reader.read();
+
+    // Race against timeout only before we've received anything
     if (!loadingHidden) {
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error('STREAM_TIMEOUT')), STREAM_TIMEOUT_MS)
@@ -234,7 +314,6 @@ async function sendQueryStreaming(message, bubbleEl) {
         var { done, value } = await Promise.race([readPromise, timeoutPromise]);
       } catch (err) {
         if (err.message === 'STREAM_TIMEOUT') {
-          // Proxy is buffering — fall back to non-streaming
           reader.cancel();
           await sendQueryFallback(message, bubbleEl);
           return;
@@ -246,48 +325,13 @@ async function sendQueryStreaming(message, bubbleEl) {
     }
 
     if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const events = buffer.split('\n\n');
-    buffer = events.pop();
-
-    for (const raw of events) {
-      const line = raw.trim();
-      if (!line.startsWith('data: ')) continue;
-
-      let evt;
-      try { evt = JSON.parse(line.slice(6)); } catch { continue; }
-
-      if (evt.type === 'thinking') {
-        // LLM planning started — hide the full-page overlay, show inline status
-        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
-        setStatusLine(bubbleEl, evt.content, 'thinking');
-
-      } else if (evt.type === 'tool_start') {
-        // A tool is about to run — update the inline status line
-        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
-        setStatusLine(bubbleEl, evt.content, 'tool');
-
-      } else if (evt.type === 'token') {
-        // First token — remove status line and start rendering the response
-        if (!loadingHidden) { hideLoading(); loadingHidden = true; }
-        clearStatusLine(bubbleEl);
-        fullText += evt.content;
-        bubbleEl.innerHTML = renderMarkdown(fullText) + '<span class="cursor">▋</span>';
-        scrollChatToBottom();
-
-      } else if (evt.type === 'done') {
-        clearStatusLine(bubbleEl);
-        bubbleEl.innerHTML = renderMarkdown(fullText);
-        if (!loadingHidden) hideLoading();
-        saveTrace(evt.trace, message);
-        maybeRefreshOrders(evt.trace);
-
-      } else if (evt.type === 'error') {
-        throw new Error(evt.message);
-      }
-    }
+    processChunk(decoder.decode(value, { stream: true }));
   }
+
+  // Drain any remaining data the loop exited without processing
+  const trailing = decoder.decode(); // flush decoder
+  if (trailing) processChunk(trailing);
+  if (buffer.trim()) processChunk(''); // force-process any complete event left in buffer
 }
 
 async function sendQueryFallback(message, bubbleEl) {

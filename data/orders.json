@@ -3,16 +3,16 @@
     {
       "order_id": "ORD-78321",
       "customer_id": "CUST-001",
-      "status": "shipped",
+      "status": "cancelled",
       "created_at": "2025-05-01T10:30:00Z",
       "estimated_delivery": "2025-05-08",
       "tracking_number": "TRACK-7X9K2M",
       "shipping_address": {
-        "line1": "4th Floor, Prestige Tower, Outer Ring Road",
-        "line2": "",
+        "line1": "12 MG Road",
+        "line2": "Koramangala",
         "city": "Bengaluru",
         "state": "Karnataka",
-        "pincode": "560103"
+        "pincode": "560034"
       },
       "items": [
         {
@@ -21,7 +21,7 @@
           "name": "Dell Inspiron 15 Laptop",
           "quantity": 1,
           "unit_price": 55000.0,
-          "status": "active"
+          "status": "cancelled"
         },
         {
           "line_id": 2,
@@ -32,7 +32,7 @@
           "status": "cancelled"
         }
       ],
-      "total_amount": 55000.0,
+      "total_amount": 0.0,
       "payment_method": "HDFC_CREDIT"
     },
     {
