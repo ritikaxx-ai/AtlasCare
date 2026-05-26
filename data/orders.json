@@ -315,11 +315,11 @@
       "estimated_delivery": "2026-05-28",
       "tracking_number": "TRACK-9A2B3C",
       "shipping_address": {
-        "line1": "12 MG Road",
-        "line2": "Koramangala",
+        "line1": "4th Floor, Prestige Tower, Outer Ring Road",
+        "line2": "",
         "city": "Bengaluru",
         "state": "Karnataka",
-        "pincode": "560034"
+        "pincode": "560103"
       },
       "items": [
         {
