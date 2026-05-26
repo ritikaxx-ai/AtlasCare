@@ -1,0 +1,37 @@
+services:
+  atlascare:
+    build: .
+    image: atlascare:latest
+    container_name: atlascare
+    ports:
+      - "8000:8000"
+
+    # Secrets — read from your local .env file, never baked into the image
+    env_file:
+      - .env
+
+    # Additional runtime env vars
+    environment:
+      - PORT=8000
+
+    # Persist ChromaDB index and logs across container restarts
+    volumes:
+      - chroma_data:/app/data/chroma_db
+      - log_data:/app/logs
+
+    # Restart automatically unless explicitly stopped
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  chroma_data:
+    driver: local
+  log_data:
+    driver: local
