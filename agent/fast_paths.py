@@ -1,24 +1,20 @@
 """
-agent/fast_paths.py — deterministic planning and template-based response synthesis.
+agent/fast_paths.py — greeting detection, fallback plan builders, synthesis templates.
 
-This file does two separate jobs:
+Roles:
+1. GREETING FAST-PATH — is_greeting() skips Groq entirely for chitchat
+2. FALLBACK PLANNERS — build_jN_plan() functions used only when Groq fails
+3. SYNTHESIS — synthesize_from_trace() turns tool outputs into customer-facing text
+   (no LLM; all data comes directly from tool outputs stored in the trace)
 
-1. PLANNING (build_jN_plan / try_build_j2_plan / classify_journey_for_routing)
-   Each "build" function constructs an ExecutionPlan — a list of tool steps —
-   without calling any LLM. The router picks the right builder based on journey type.
-
-2. SYNTHESIS (synthesize_from_trace)
-   After the executor runs all tools, this function turns the raw tool outputs
-   into a customer-friendly text response using static templates.
-   It never calls an LLM; all data comes directly from tool outputs stored in the trace.
-
-Journey types and their builders:
-  J1  → build_j1_plan    — order tracking (get_order_status)
-  J2  → try_build_j2_plan — cancel / refund / address update
-  J3  → build_j3_plan    — high-value escalation (create_crm_case)
-  J4  → build_j4_plan    — customer history RAG (get_customer_interaction_history)
-  J5  → build_j5_plan    — CRM case status lookup (get_case_status)
-  J-KB → build_kb_plan   — policy questions (search_kb)
+Normal flow: Groq (_intent_node) handles ALL planning via system_conductor.txt.
+Fallback flow (Groq timeout/error only):
+  J1  → build_j1_plan
+  J3  → build_j3_plan
+  J4  → build_j4_plan
+  J5  → build_j5_plan
+  J-KB → build_kb_plan
+  default → clarify_order_id sentinel
 """
 import re
 from typing import Optional
@@ -312,57 +308,6 @@ def is_case_status_query(message: str) -> bool:
     return has_case_id and any(w in msg for w in status_words)
 
 
-def classify_journey_for_routing(
-    message: str, guardrail_action: str, resolved_order_id: Optional[str] = None
-) -> str:
-    """
-    Priority order (highest wins):
-      J3  — guardrail already flagged high-value refund
-      J5  — message contains a CASE-XXXXXX ID + status word
-      J4  — message mentions prior interactions ("I called", "follow up", etc.)
-      J-KB — policy/returns/refund-policy question (but NOT a refund action)
-      J1  — has order ID + tracking intent, no cancel/refund words
-      J2  — default for cancel/refund/address/shipping actions
-    """
-    if guardrail_action == "ESCALATE":
-        return "J3"
-
-    # J5 must be checked before J3/J2 — a case reference + status word is never an escalation
-    if is_case_status_query(message):
-        return "J5"
-
-    msg = message.lower()
-    # Use resolved order (from session memory) if no explicit order in message
-    has_order = bool(extract_order_id(message) or resolved_order_id)
-
-    if needs_customer_history(message):
-        return "J4"
-
-    if needs_policy_lookup(message):
-        return "J-KB"
-
-    tracking_intent = any(
-        k in msg for k in ("where is", "track", "tracking", "status of my order", "order status",
-                           "where is it", "has it shipped", "delivery status")
-    )
-    compound_intent = any(
-        k in msg
-        for k in ("cancel", "refund", "ship remainder", "office address", "update address", "damaged")
-    )
-
-    if has_order and tracking_intent and not compound_intent:
-        return "J1"
-
-    if any(k in msg for k in ("cancel", "refund", "ship", "office", "address")):
-        return "J2"
-
-    # Fallback: if there's a resolved order and no compound intent, treat as tracking
-    if resolved_order_id and not compound_intent:
-        return "J1"
-
-    return "J2"
-
-
 def _ownership_plan(order_id: str, customer_id: Optional[str]) -> Optional[ExecutionPlan]:
     """
     Cross-customer access guard. Returns a plan that renders an "unauthorized" message
@@ -393,206 +338,6 @@ def build_j1_plan(
     return ExecutionPlan(
         steps=[PlanStep(tool="get_order_status", params={"order_id": order_id})]
     )
-
-
-def try_build_j2_plan(
-    message: str,
-    customer_id: Optional[str] = None,
-    resolved_order_id: Optional[str] = None,
-) -> Optional[ExecutionPlan]:
-    """
-    Deterministic J2 planner. Covers four sub-cases by reading keywords:
-
-      • "item N" + cancel → cancel_order_item + execute_refund for that line
-      • "cancel" (no item) → cancel_full_order + execute_refund for all active items
-      • address keyword only → update_shipping_address (or ask for clarification)
-      • cancel/refund + address keyword → cancel + refund + update_shipping_address
-
-    Two guardrail checks inside:
-      - If refund amount > ₹25K, escalate to a CRM case (create_crm_case) instead.
-      - If order is already delivered/cancelled, surface status so synthesis can explain.
-
-    Returns None when the intent can't be determined (caller falls back to clarify_order_id).
-    """
-    msg = message.lower()
-    has_cancel = "cancel" in msg
-    has_refund = "refund" in msg
-
-    # Need at least cancel or refund intent
-    if not has_cancel and not has_refund and not any(k in msg for k in ("ship", "office", "address")):
-        return None
-
-    order_id = extract_order_id(message) or resolved_order_id
-    if not order_id:
-        return None
-
-    store = get_data_store()
-    order = store.get_order(order_id)
-
-    # --- Ownership check ---
-    if customer_id and order and order.get("customer_id") != customer_id:
-        return ExecutionPlan(
-            steps=[PlanStep(tool="unauthorized_order_access", params={"order_id": order_id})]
-        )
-
-    if order and order.get("status") in ("delivered", "cancelled"):
-        # Order not eligible — surface the real status so synthesis can explain why
-        return ExecutionPlan(
-            steps=[PlanStep(tool="get_order_status", params={"order_id": order_id})]
-        )
-
-    if not order:
-        return None
-
-    method_match = re.search(
-        r"\b(HDFC_CREDIT|UPI|DEBIT_CARD|CREDIT_CARD)\b", message, re.IGNORECASE
-    )
-    method = method_match.group(1).upper() if method_match else (
-        order.get("payment_method", "HDFC_CREDIT")
-    )
-
-    line_match = re.search(r"item\s+(\d+)", message, re.IGNORECASE)
-
-    if line_match:
-        # --- Single item cancellation ---
-        line_id = int(line_match.group(1))
-        refund_amount = 1500.0
-        for item in order.get("items", []):
-            if item.get("line_id") == line_id and item.get("status") != "cancelled":
-                refund_amount = float(item.get("unit_price", 1500.0))
-                break
-
-        # Guardrail: high-value item must go to a specialist
-        payment_config = store.get_payment_config()
-        auto_limit = float(payment_config.get("auto_refund_limit_inr", 25000))
-        if refund_amount > auto_limit:
-            cid = order.get("customer_id") or extract_customer_id_from_order(order_id)
-            return ExecutionPlan(steps=[
-                PlanStep(
-                    tool="create_crm_case",
-                    params={
-                        "customer_id": cid,
-                        "order_id": order_id,
-                        "description": (
-                            f"Customer requested cancellation of item {line_id} with refund of "
-                            f"₹{refund_amount:,.0f}, which exceeds the ₹{auto_limit:,.0f} "
-                            f"auto-refund limit. Manual review required."
-                        ),
-                        "priority": "high",
-                        "amount_inr": refund_amount,
-                    },
-                )
-            ])
-
-        steps = [
-            PlanStep(
-                tool="cancel_order_item",
-                params={"order_id": order_id, "line_id": line_id},
-            ),
-            PlanStep(
-                tool="execute_refund",
-                params={
-                    "order_id": order_id,
-                    "amount_inr": refund_amount,
-                    "method": method,
-                },
-            ),
-        ]
-    elif has_cancel:
-        # --- Full order cancellation (no line item specified) ---
-        active_items = [i for i in order.get("items", []) if i.get("status") != "cancelled"]
-        refund_amount = sum(float(i.get("unit_price", 0)) * int(i.get("quantity", 1))
-                           for i in active_items)
-
-        # Guardrail: high-value orders must be handled by a specialist
-        payment_config = store.get_payment_config()
-        auto_limit = float(payment_config.get("auto_refund_limit_inr", 25000))
-        if refund_amount > auto_limit:
-            cid = order.get("customer_id") or extract_customer_id_from_order(order_id)
-            return ExecutionPlan(steps=[
-                PlanStep(
-                    tool="create_crm_case",
-                    params={
-                        "customer_id": cid,
-                        "order_id": order_id,
-                        "description": (
-                            f"Customer requested full order cancellation with refund of "
-                            f"₹{refund_amount:,.0f}, which exceeds the ₹{auto_limit:,.0f} "
-                            f"auto-refund limit. Manual review required."
-                        ),
-                        "priority": "high",
-                        "amount_inr": refund_amount,
-                    },
-                )
-            ])
-
-        steps = [
-            PlanStep(
-                tool="cancel_full_order",
-                params={"order_id": order_id},
-            ),
-            PlanStep(
-                tool="execute_refund",
-                params={
-                    "order_id": order_id,
-                    "amount_inr": refund_amount,
-                    "method": method,
-                },
-            ),
-        ]
-    elif any(k in msg for k in ("office", "home", "work", "ship", "address")):
-        # --- Standalone address update (no cancel/refund) ---
-        cid = order.get("customer_id") or extract_customer_id_from_order(order_id)
-        label = extract_address_label(msg)
-        if not label or not resolve_address(cid, msg):
-            # No saved address matched — ask the customer to specify
-            return ExecutionPlan(steps=[
-                PlanStep(
-                    tool="address_clarification_needed",
-                    params={
-                        "order_id": order_id,
-                        "customer_id": cid,
-                        "available_labels": _get_available_address_labels(cid),
-                    },
-                )
-            ])
-        return ExecutionPlan(steps=[
-            PlanStep(
-                tool="update_shipping_address",
-                params={"order_id": order_id, "customer_id": cid, "address_label": label},
-            )
-        ])
-
-    else:
-        # Unknown J2 intent — surface order status so customer sees their order
-        return ExecutionPlan(
-            steps=[PlanStep(tool="get_order_status", params={"order_id": order_id})]
-        )
-
-    # Append address update if cancel/refund AND address change both requested
-    if any(k in msg for k in ("office", "home", "work", "ship", "address")):
-        cid = order.get("customer_id") or extract_customer_id_from_order(order_id)
-        label = extract_address_label(msg)
-        if label and resolve_address(cid, msg):
-            steps.append(
-                PlanStep(
-                    tool="update_shipping_address",
-                    params={"order_id": order_id, "customer_id": cid, "address_label": label},
-                )
-            )
-        else:
-            steps.append(
-                PlanStep(
-                    tool="address_clarification_needed",
-                    params={
-                        "order_id": order_id,
-                        "customer_id": cid,
-                        "available_labels": _get_available_address_labels(cid),
-                    },
-                )
-            )
-
-    return ExecutionPlan(steps=steps)
 
 
 def build_j4_plan(message: str, customer_id: Optional[str] = None) -> ExecutionPlan:

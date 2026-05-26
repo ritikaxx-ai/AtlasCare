@@ -1,44 +1,69 @@
 AtlasCare — Test Plan Summary
 ================================
-Version 3.0 | LangGraph + Pydantic AI
+Version 3.0 | LangGraph + Groq (LLaMA 3.3 70B)
 
 COVERED
 -------
 1. Unit tests (tests/test_agent.py)
-   - J1: single get_order_status, latency < 3s
-   - J2: cancel before refund; shipping update
-   - J3: guardrail blocks execute_refund; CRM case has trace_id
+   - J-GREET: greeting fast-path, 0 LLM calls, < 50ms
+   - J1: get_order_status, tracking in response
+   - J2: cancel_order_item before execute_refund (order enforced)
+   - J2: cancel_full_order for "cancel everything"
+   - J2: update_shipping_address with saved label
+   - J3: guardrail blocks execute_refund; CRM case created with trace_id
+   - J4: get_customer_interaction_history → ChromaDB RAG
+   - J5: get_case_status for CASE-XXXXXX queries
+   - J-KB: search_kb for policy/return/warranty questions
+   - J-BLOCKED: prompt injection → blocked, 0 LLM calls
+   - Multi-turn: session memory resolves order_id across turns
 
 2. E2E latency (tests/test_latency_e2e.py)
-   - J1/J2/J3 against live POST /query when server running
+   - All journeys against live POST /query when server running
+   - Greeting < 50ms, J1/J2/J3 < 2s P95
 
-3. Manual UI (docs/TESTING.md)
-   - Trace manager, journey filters, tool call details
+3. Safety
+   - Rs.42000 / ₹42,000 / "42000 rupees" formats all trigger J3 escalation
+   - execute_refund never fires when amount > ₹25,000
+   - Prompt injection patterns blocked pre-LLM (0 Groq calls wasted)
+   - Unauthorized order access rejected (customer_id mismatch)
 
-4. Guardrail
-   - Rs.42000 / Rs formats trigger escalation
+4. Session Memory
+   - Turn 1 establishes order_id, Turn 2 resolves it from memory
+   - Last 10 turns passed to Groq for reference resolution
 
 5. API contract
-   - POST /query and GET /health per assignment spec
+   - POST /query — message + session_id → response + trace + journey_type
+   - GET /health — 200 OK
+   - GET /metrics — LLM stats, journey counts, guardrail triggers
+
+6. Docker
+   - Image builds successfully (183MB)
+   - Container starts, health check passes
+   - All API endpoints functional inside container
 
 OUT OF SCOPE (this submission)
 ------------------------------
 - Load test at 18K requests/day
-- Auth, rate limiting, production DB
-- Multi-turn session memory
-- KB-driven policy journey (tool exists, not default path)
+- Auth, rate limiting, production database
+- End-to-end LLM regression suite (golden set)
+- ChromaDB cross-customer isolation stress test
 
 BEFORE PRODUCTION
 -----------------
-- Expand synthetic data per schema (20+ orders)
-- Session history for follow-up questions
-- Golden-set LLM regression for novel J2 utterances
+- Expand mock data beyond 3 sample orders
+- Golden-set LLM regression tests for edge-case phrasings
 - SRE runbooks + alert thresholds on /metrics
-- Compliance audit export (traces + cases)
+- Compliance audit export (traces + cases to S3/GCS)
+- Rate limiting per customer_id
+- JWT auth on /query endpoint
 
 RUN
 ---
-  pip install -r requirements.txt
-  export GEMINI_API_KEY=<key>
-  uvicorn main:app --port 8000
+  # Docker (recommended)
+  docker-compose up
+  curl http://localhost:8000/health
+
+  # Local
+  source venv/bin/activate
+  uvicorn main:app --host 0.0.0.0 --port 8000 --reload
   pytest tests/ -v

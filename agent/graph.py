@@ -28,7 +28,6 @@ from agent.fast_paths import (
     build_j4_plan,
     build_j5_plan,
     build_kb_plan,
-    try_build_j2_plan,
     needs_policy_lookup,
     needs_customer_history,
     is_case_status_query,
@@ -260,10 +259,7 @@ def _deterministic_fallback(
     message: str, customer_id: Optional[str],
     resolved_order_id: Optional[str], resolved_case_id: Optional[str]
 ) -> ExecutionPlan:
-    """Regex-based fallback when LLM fails."""
-    from agent.fast_paths import (
-        needs_policy_lookup, needs_customer_history, is_case_status_query
-    )
+    """Keyword-based fallback used only when Groq times out or errors."""
     if is_case_status_query(message):
         return build_j5_plan(message, customer_id, resolved_case_id)
     if needs_customer_history(message):
@@ -271,9 +267,6 @@ def _deterministic_fallback(
     if needs_policy_lookup(message):
         return build_kb_plan(message)
     if resolved_order_id:
-        j2 = try_build_j2_plan(message, customer_id, resolved_order_id)
-        if j2:
-            return j2
         return build_j1_plan(message, customer_id, resolved_order_id)
     return ExecutionPlan(steps=[PlanStep(tool="clarify_order_id", params={})])
 
