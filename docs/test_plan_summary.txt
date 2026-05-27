@@ -4,60 +4,98 @@ Version 3.0 | LangGraph + Groq (LLaMA 3.3 70B)
 
 COVERED
 -------
-1. Unit tests (tests/test_agent.py)
-   - J-GREET: greeting fast-path, 0 LLM calls, < 50ms
-   - J1: get_order_status, tracking in response
-   - J2: cancel_order_item before execute_refund (order enforced)
-   - J2: cancel_full_order for "cancel everything"
-   - J2: update_shipping_address with saved label
-   - J3: guardrail blocks execute_refund; CRM case created with trace_id
-   - J4: get_customer_interaction_history → ChromaDB RAG
-   - J5: get_case_status for CASE-XXXXXX queries
-   - J-KB: search_kb for policy/return/warranty questions
-   - J-BLOCKED: prompt injection → blocked, 0 LLM calls
+1. Unit tests (tests/test_agent.py) — 23 tests, all via real pipeline (no fallback)
+   - J-GREET: greeting fast-path, 0 LLM calls, < 500ms, multi-word farewell
+   - J-GREET negative: "Hi where is my order" is NOT treated as greeting
+   - J-BLOCKED: prompt injection blocked pre-LLM, injection_blocked sentinel in trace
+   - J3: guardrail escalates Rs.42000 → CRM, 0 LLM calls, multiple amount formats
+   - J3 negative: amount below Rs.25K passes through guardrail correctly
+   - J1: get_order_status via real mock LLM pipeline (not fallback)
+   - J1 isolation: no RAG or KB tools triggered on tracking request
+   - J2a: cancel_order_item before execute_refund (step ordering enforced)
+   - J2b: cancel_full_order + execute_refund for "cancel everything"
+   - J2c: update_shipping_address only (no cancel or refund)
+   - J2d: compound cancel + refund + address update — all 3 steps in order
+   - J2e: executor gate blocks execute_refund when cancel soft-fails (already_cancelled)
+   - J2f: high-value item (Rs.55000) → create_crm_case, not execute_refund
+   - Amount coercion: string "1299.0" from Groq coerced to float, no TypeError
+   - J4: get_customer_interaction_history → ChromaDB RAG, history returned
+   - J5: get_case_status with correct case_id from message
+   - J-KB: search_kb for policy question, no RAG, no order tools
+   - J-KB: second query pattern (refund limit question)
    - Multi-turn: session memory resolves order_id across turns
+   - JWT auth: /auth/login issues token, /query extracts customer_id from header
+   - Ownership: customer_id in JWT prevents access to other customers' orders
 
-2. E2E latency (tests/test_latency_e2e.py)
-   - All journeys against live POST /query when server running
-   - Greeting < 50ms, J1/J2/J3 < 2s P95
+2. E2E latency (tests/test_latency_e2e.py) — requires live server
+   - J-GREET < 500ms
+   - J1 < 3s
+   - J3 < 3s (0 LLM calls)
+   - J2 < 15s (real Groq call)
+   - J-BLOCKED < 200ms (pre-LLM block)
 
 3. Safety
-   - Rs.42000 / ₹42,000 / "42000 rupees" formats all trigger J3 escalation
-   - execute_refund never fires when amount > ₹25,000
+   - Rs.42000 / ₹42,000 / "42000 rupees" / "INR 30000" all trigger J3 escalation
+   - execute_refund never fires when amount > Rs.25,000
    - Prompt injection patterns blocked pre-LLM (0 Groq calls wasted)
-   - Unauthorized order access rejected (customer_id mismatch)
-   - Executor gate: cancel soft-failure (already_cancelled, not_found) blocks execute_refund
+   - Executor gate: cancel soft-failure (already_cancelled) blocks execute_refund
    - Phantom refund prevention verified: already-cancelled item → 0 refund calls
+   - Amount coercion: Groq string "499.0" → float before comparison (no TypeError)
 
-4. Session Memory
+4. Authentication
+   - POST /auth/login issues HS256 JWT (8h expiry) for valid customer_id
+   - POST /auth/login returns 404 for unknown customer_id
+   - POST /query extracts customer_id from Authorization: Bearer header
+   - customer_id never accepted in request body
+   - Unauthenticated requests work but skip ownership checks
+
+5. Session Memory
    - Turn 1 establishes order_id, Turn 2 resolves it from memory
+   - customer_id bound to session at first authenticated request
    - Last 10 turns passed to Groq for reference resolution
 
-5. API contract
-   - POST /query — message + session_id → response + trace + journey_type
+6. API contract
+   - POST /auth/login — customer_id → JWT token
+   - POST /query — message + session_id + JWT header → response + trace + journey_type
    - GET /health — 200 OK
    - GET /metrics — LLM stats, journey counts, guardrail triggers
 
-6. Docker
-   - Image builds successfully (183MB)
+7. Docker
+   - Image builds successfully (~183MB)
    - Container starts, health check passes
    - All API endpoints functional inside container
 
 OUT OF SCOPE (this submission)
 ------------------------------
 - Load test at 18K requests/day
-- Auth, rate limiting, production database
+- Redis-backed session memory (in-memory dict used currently)
+- JWT credential verification (password / OTP)
+- JWT token revocation list
+- JWT refresh token flow
+- Rate limiting per customer_id
 - End-to-end LLM regression suite (golden set)
 - ChromaDB cross-customer isolation stress test
+- Compliance audit export (S3/GCS)
 
 BEFORE PRODUCTION
 -----------------
-- Expand mock data beyond 3 sample orders
-- Golden-set LLM regression tests for edge-case phrasings
-- SRE runbooks + alert thresholds on /metrics
-- Compliance audit export (traces + cases to S3/GCS)
-- Rate limiting per customer_id
-- JWT auth on /query endpoint
+REDIS (session layer):
+  - Replace in-memory Python dict in session_memory.py with Redis HASH (TTL: 24h)
+  - Add Redis as write-through cache for order/CRM mutations in agent/cache.py
+  - Add REDIS_URL env var with graceful fallback to in-memory dict
+  - Add Redis service to docker-compose.yml
+
+JWT (auth hardening):
+  - Add credential verification (password hash or OTP) to POST /auth/login
+  - Add token revocation list (Redis SET)
+  - Add refresh token flow (POST /auth/refresh)
+  - Rate-limit /auth/login (Redis counter) to prevent brute-force
+
+GENERAL:
+  - Expand mock data beyond current sample orders
+  - Golden-set LLM regression tests for edge-case phrasings
+  - SRE runbooks + alert thresholds on /metrics
+  - Compliance audit export (traces + cases to S3/GCS)
 
 RUN
 ---

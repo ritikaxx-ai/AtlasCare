@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-load_dotenv()  # loads GEMINI_API_KEY (and any other vars) from .env before anything else
+load_dotenv()  # loads GROQ_API_KEY, JWT_SECRET, LANGCHAIN_* from .env
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware

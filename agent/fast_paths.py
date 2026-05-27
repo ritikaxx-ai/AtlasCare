@@ -60,22 +60,6 @@ def extract_address_label(msg: str) -> Optional[str]:
     return None
 
 
-def resolve_address(cid: str, msg: str) -> dict:
-    """
-    Try to resolve a saved address for the customer from the message label.
-    Returns the address dict if found, or an empty dict if clarification needed.
-    """
-    store = get_data_store()
-    label = extract_address_label(msg)
-    if label:
-        try:
-            addr = store.get_customer_address(cid, label)
-            if addr:
-                return addr
-        except Exception:
-            pass
-    return {}
-
 
 def _get_available_address_labels(cid: str) -> list:
     """Return list of saved address labels for this customer."""
