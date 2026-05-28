@@ -32,16 +32,19 @@ execute_refund(order_id, amount_inr, method)
   - method: use payment_method from the order context. If unknown, use "original".
   - HARD LIMIT: Do NOT call this if amount_inr exceeds 25000. Use create_crm_case instead.
 
-update_shipping_address(order_id, customer_id, address_label)
-  Change the delivery address for an active order using a saved address label.
+update_shipping_address(order_id, customer_id, address_label, free_text_address, save_as_label)
+  Change the delivery address for an active order.
   Use when: customer says "ship to office", "send to home", "update address", "change address",
-            or "ship the remaining/other items to [address]" after cancelling specific items.
-  - address_label: the saved address name — "home" or "office" (plain string).
+            or provides a new address in free text.
+  - address_label: use "home" or "office" ONLY if customer says "my home address" or "my office address" referencing a previously saved address.
+  - free_text_address: use this when the customer types out a specific address (e.g. "Redbull Apartment, Koramangala, Bengaluru"). Pass the full typed address as a string.
+  - save_as_label: if the customer says "my home address is X" or "my office address is X" (i.e. they are declaring/setting their address), pass "home" or "office" here so it gets saved to their profile for future use.
+  - If customer says "send to home/office" (referencing saved), pass address_label. If they type out an address, pass free_text_address. If they say "my home address is X", pass both free_text_address=X and save_as_label="home".
   - Do NOT use: if order status is "delivered" or "cancelled".
 
 address_clarification_needed(order_id, customer_id, available_labels)
   Ask the customer to clarify which saved address they want.
-  Use when: customer requests address update but the label is not in saved_address_labels.
+  Use when: customer requests address update but gives no address and no label.
   - available_labels: JSON array e.g. ["home", "office"] or [].
 
 create_crm_case(customer_id, order_id, description, priority, amount_inr)

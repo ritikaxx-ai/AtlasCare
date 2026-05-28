@@ -113,22 +113,35 @@ def is_refund_intent(text: str) -> bool:
     return any(kw in text_lower for kw in keywords)
 
 
-def check_guardrails(message: str) -> GuardrailResult:
+def check_guardrails(message: str, session_id: str = None) -> GuardrailResult:
     """
     Pre-LLM guardrail check for high-value refund detection.
     Prevents unauthorized refunds > ₹25,000.
     """
     start_time = time.perf_counter()
-    
+
     data_store = get_data_store()
     metrics = get_metrics_collector()
     config = data_store.get_payment_config()
     threshold = config.get("auto_refund_limit_inr", 25000)
-    
+
     amount = extract_currency_amount(message)
-    
+
+    # If no amount in message but it's a cancel/refund intent,
+    # look up the order total from the message or session
+    if not amount and is_refund_intent(message):
+        from agent.fast_paths import extract_order_id
+        from agent.session_memory import resolve_order_id
+        order_id = extract_order_id(message)
+        if not order_id and session_id:
+            order_id = resolve_order_id(session_id, message)
+        if order_id:
+            order = data_store.get_order(order_id)
+            if order:
+                amount = float(order.get("total_amount", 0) or 0)
+
     latency_ms = int((time.perf_counter() - start_time) * 1000)
-    
+
     if amount and amount > threshold and is_refund_intent(message):
         # Record guardrail activation
         metrics.record_guardrail(

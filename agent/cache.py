@@ -208,6 +208,24 @@ class DataStore:
         
         raise ValueError(f"Address with label '{label}' not found for customer {customer_id}")
     
+    def save_customer_address(self, customer_id: str, label: str, address: dict) -> bool:
+        """Save or update a customer's saved address by label (e.g. 'home', 'office')."""
+        crm_path = os.path.join(self._data_dir, "crm_cases.json")
+        with self._crm_lock:
+            for customer in self._crm.get("customers", []):
+                if customer["customer_id"] == customer_id:
+                    addresses = customer.setdefault("addresses", [])
+                    # Update if label already exists, otherwise append
+                    for addr in addresses:
+                        if addr.get("label", "").lower() == label.lower():
+                            addr.update({**address, "label": label})
+                            break
+                    else:
+                        addresses.append({**address, "label": label})
+                    self._persist_crm()
+                    return True
+        return False
+
     def create_crm_case(self, case: dict) -> dict:
         """Create new CRM case"""
         with self._crm_lock:

@@ -573,7 +573,9 @@ function maybeRefreshOrders(trace) {
 
 async function loadOrders(customerId) {
   try {
-    const res = await fetch(`${API_BASE}/customers/${customerId}/orders`);
+    const headers = { 'Content-Type': 'application/json' };
+    if (state.authToken) headers['Authorization'] = `Bearer ${state.authToken}`;
+    const res = await fetch(`${API_BASE}/customers/${customerId}/orders`, { headers });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     renderOrders(data.orders || []);
@@ -624,12 +626,13 @@ function buildOrderCard(order) {
       </div>
 
       <div class="order-items">
-        ${(order.items || []).map(item => `
+        ${(order.items || []).slice(0, 2).map(item => `
           <div class="order-item-row">
             <div class="order-item-line">${item.line_id}</div>
             <span class="order-item-name" title="${item.name}">${item.name}</span>
             <span class="order-item-status ${item.status}">${item.status === 'active' ? '✓' : '✗'}</span>
           </div>`).join('')}
+        ${order.items && order.items.length > 2 ? `<div class="order-item-more">+${order.items.length - 2} more item${order.items.length - 2 > 1 ? 's' : ''}</div>` : ''}
       </div>
 
       ${actions.length ? `

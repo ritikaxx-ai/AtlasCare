@@ -193,8 +193,15 @@ def _store_trace(trace_id: str, trace_data: dict, journey_type: str,
 
 
 @app.get("/customers/{customer_id}/orders")
-def get_customer_orders(customer_id: str):
+def get_customer_orders(
+    customer_id: str,
+    token_customer_id: Optional[str] = Depends(get_customer_from_token),
+):
     """Return all orders for a customer, sorted newest-first."""
+    if not token_customer_id:
+        raise HTTPException(status_code=401, detail="Authentication required — please log in")
+    if token_customer_id != customer_id:
+        raise HTTPException(status_code=403, detail="Access denied — you can only view your own orders")
     orders = data_store.get_orders_for_customer(customer_id)
     if orders is None:
         raise HTTPException(status_code=404, detail=f"Customer {customer_id} not found")
@@ -297,6 +304,10 @@ async def query(
     Authentication: pass Authorization: Bearer <JWT> header (obtained from POST /auth/login).
     customer_id is extracted server-side — never accepted in the request body.
     """
+    # ── Auth check — reject unauthenticated requests ──────────────────────
+    if not customer_id:
+        raise HTTPException(status_code=401, detail="Authentication required — please log in")
+
     # ── Input validation (HTTP 400, never 500) ────────────────────────────
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=400, detail="message must not be empty")
@@ -353,6 +364,9 @@ async def query_stream(
       {"type": "done",       "journey_type": "J1", "trace": {...}} — end of stream
       {"type": "error",      "message": "..."}                  — pipeline error
     """
+    if not customer_id:
+        raise HTTPException(status_code=401, detail="Authentication required — please log in")
+
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=400, detail="message must not be empty")
     if len(request.message) > MAX_MESSAGE_LENGTH:

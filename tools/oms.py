@@ -132,19 +132,30 @@ class update_shipping_address(TracedTool):
 
     def _execute(self, order_id: str, customer_id: str = None,
                  address_label: str = None, address: Dict[str, Any] = None,
+                 free_text_address: str = None, save_as_label: str = None,
                  **kwargs) -> Dict[str, Any]:
         trace_id = getattr(self.trace_ctx, "trace_id", "unknown")
         data_store = get_data_store()
 
-        # Resolve address: prefer label lookup (LLM path), fall back to raw dict (fast-path)
+        # Resolve address: prefer label lookup, then raw dict, then free-text string
         if address_label and customer_id:
             try:
                 address = data_store.get_customer_address(customer_id, address_label)
-            except Exception as e:
-                return {"error": f"No saved address with label '{address_label}' found for this account."}
+            except Exception:
+                pass  # Fall through to free_text_address below
+
+        # If label lookup failed or no label given, try free-text address
+        if (not address or not isinstance(address, dict)) and free_text_address:
+            address = {"line1": free_text_address, "line2": "", "city": "", "state": "", "pincode": ""}
 
         if not address or not isinstance(address, dict):
             return {"error": "No valid address provided. Please specify a saved address label or full address."}
+
+        # If customer said "my home address is X" or "my office address is X",
+        # save it to their profile so future orders can use it
+        label_to_save = save_as_label or address_label
+        if label_to_save and customer_id and free_text_address:
+            data_store.save_customer_address(customer_id, label_to_save, address)
 
         log.info({"event": "tool_call_start", "tool": "update_shipping_address",
                   "trace_id": trace_id, "order_id": order_id,

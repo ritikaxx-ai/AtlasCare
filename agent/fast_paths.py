@@ -417,6 +417,10 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
 
     parts: list[str] = []
 
+    # If cancel already succeeded, skip any CRM case message — it creates confusion
+    tool_names = [c.tool_name for c in trace.tool_calls if c.success]
+    cancel_succeeded = any(t in ("cancel_full_order", "cancel_order_item") for t in tool_names)
+
     for call in trace.tool_calls:
         if not call.success:
             parts.append(
@@ -617,7 +621,7 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
             parts.append("\n".join(lines))
 
         # ── J3 / J2 high-value: CRM escalation ──────────────────────────
-        elif name == "create_crm_case":
+        elif name == "create_crm_case" and not cancel_succeeded:
             case_id = out.get("case_id", "your case")
             amount = out.get("amount_inr") or out.get("amount_refunded")
             is_duplicate = out.get("deduplicated", False)

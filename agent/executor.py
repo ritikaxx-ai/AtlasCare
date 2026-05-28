@@ -8,10 +8,11 @@ trace is fully populated by the time run_plan() returns — the synthesizer read
 
 Fail-fast: if any tool raises, execution stops immediately (no partial-success recovery).
 """
-from typing import Dict, Any, Type
+from typing import Dict, Any, Type, Optional
 from schemas.plan import ExecutionPlan
 from schemas.trace import TraceContext
 from tools.base import TracedTool
+from agent.cache import get_data_store
 from agent.stream_events import emit_sync, TOOL_LABELS
 from tools.oms import (
     get_order_status,
@@ -36,9 +37,16 @@ from tools.kb import search_kb
 from tools.payments import execute_refund
 
 class Executor:
-    def __init__(self, trace_ctx: TraceContext):
+    # Tools that operate on a specific order_id and must pass ownership check
+    _ORDER_TOOLS = {
+        "get_order_status", "cancel_order_item", "cancel_full_order",
+        "update_shipping_address", "execute_refund",
+    }
+
+    def __init__(self, trace_ctx: TraceContext, customer_id: Optional[str] = None):
         self.trace_ctx = trace_ctx
-        
+        self.customer_id = customer_id
+
         # Tool registry
         self.tools: Dict[str, Type[TracedTool]] = {
             "get_order_status": get_order_status,
@@ -82,6 +90,16 @@ class Executor:
             tool_class = self.tools.get(step.tool)
             if not tool_class:
                 raise ValueError(f"Unknown tool requested in plan: {step.tool}")
+
+            # ── Ownership check: block cross-customer order access ────────────
+            if self.customer_id and step.tool in self._ORDER_TOOLS:
+                order_id = step.params.get("order_id")
+                if order_id:
+                    order = get_data_store().get_order(order_id)
+                    if order and order.get("customer_id") != self.customer_id:
+                        unauth_tool = self.tools["unauthorized_order_access"](self.trace_ctx)
+                        unauth_tool(order_id=order_id)
+                        break  # Stop — don't run any further steps
 
             label = TOOL_LABELS.get(step.tool, f"Running {step.tool}...")
             emit_sync(trace_id, {"type": "tool_start", "tool": step.tool, "content": label})

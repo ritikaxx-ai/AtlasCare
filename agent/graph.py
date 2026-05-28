@@ -83,7 +83,7 @@ def _guardrail_node(state: AgentState) -> AgentState:
         return state
 
     # ── Normal guardrail check ──────────────────────────────────────────────
-    result = check_guardrails(message)
+    result = check_guardrails(message, session_id=session_id)
 
     if result.action == "ESCALATE":
         log.warning({
@@ -281,7 +281,7 @@ def _executor_node(state: AgentState) -> AgentState:
         session_id=state["session_id"],
         tool_calls=[],
     )
-    executor = Executor(trace)
+    executor = Executor(trace, customer_id=state.get("customer_id"))
     executor.run_plan(ExecutionPlan(**state["plan"]))
     state["trace"] = trace.model_dump()
     return state
