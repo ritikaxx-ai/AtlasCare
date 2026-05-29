@@ -104,6 +104,13 @@ class greeting(TracedTool):
         return {"is_greeting": True}
 
 
+class out_of_scope(TracedTool):
+    """Sentinel returned when the customer's request doesn't match any supported journey."""
+
+    def _execute(self, original_tool: str = "", **kwargs) -> Dict[str, Any]:
+        return {"out_of_scope": True, "original_tool": original_tool}
+
+
 class address_clarification_needed(TracedTool):
     """
     Sentinel returned when the customer asks to update their shipping address

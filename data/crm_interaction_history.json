@@ -1,6 +1,6 @@
 {
   "description": "CRM past interaction summaries for RAG retrieval",
-  "count": 10,
+  "count": 135,
   "interactions": [
     {
       "interaction_id": "INT-634B6B71",
@@ -134,6 +134,1669 @@
       "tags": [
         "cancellation",
         "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-5A278C0A",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:46:08.278823+00:00",
+      "summary": "The delivery address for order ORD-79500 has been updated successfully. Your order will now be shipped to: 4th Floor, Prestige Tower, Outer Ring Road, Bengaluru, Karnataka, 560103  I hope that's all s",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2c-1.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-5C4CD986",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:46:15.739356+00:00",
+      "summary": "Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2d-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry",
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-C8E8E689",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:46:16.116449+00:00",
+      "summary": "I completely understand how important this is, and I want to make sure it's handled properly. Since the refund amount of Rs.55,000 is above our automated processing limit of Rs.25,000, this needs to b",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j2f-1.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-CA427E93",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:46:16.764555+00:00",
+      "summary": "I found your previous interactions with us. Here's a summary:  1.  2026-05-29  —  Resolved     Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully",
+      "agent_notes": "Handled via AtlasCare. Journey: J4. Session: t-j4-1.",
+      "resolution": "resolved",
+      "tags": [
+        "repeat_contact",
+        "history_lookup",
+        "electronics"
+      ]
+    },
+    {
+      "interaction_id": "INT-C6DFFC69",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:52:11.072883+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: smoke-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-213DAD06",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:52:13.706720+00:00",
+      "summary": "Item 2 on order ORD-78321 has been successfully cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: smoke-2.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-2BD61F06",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:52:14.044072+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: smoke-3.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-D22EC574",
+      "customer_id": "CUST-002",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:35.325179+00:00",
+      "summary": "I wasn't able to access order ORD-79500 — it doesn't appear to be linked to your account. Please double-check the order ID. If you believe this is an error, our support team will be happy to investiga",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: cross-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-11A4D644",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:37.175022+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-BA6ABA52",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:37.575406+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-1C75BA38",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:37.937229+00:00",
+      "summary": "You're welcome! 😊 Is there anything else I can help you with? I'm here for order tracking, cancellations, refunds, or any policy questions.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-2.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-2BE217C7",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:38.283597+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-3.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-98FD3343",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:38.648216+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-greet-4.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-D3D8A4B9",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:38.996478+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-5.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-CD331682",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:39.342848+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-AE75921E",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:39.694289+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-2.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-2819F53F",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:40.040904+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-3.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-630FE49D",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:40.387020+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-4.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-4BF1F845",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:40.736423+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-5.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-A8B175DC",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:41.099399+00:00",
+      "summary": "I appreciate you reaching out, but I'm not able to help with that one right now.  Here's what I *can* help you with: • Order tracking — where is my order, delivery updates • Cancellations & refunds — ",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-oos-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-2995298A",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:41.624213+00:00",
+      "summary": "I appreciate you reaching out, but I'm not able to help with that one right now.  Here's what I *can* help you with: • Order tracking — where is my order, delivery updates • Cancellations & refunds — ",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-oos-2.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-438AD3A3",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:41.987821+00:00",
+      "summary": "I appreciate you reaching out, but I'm not able to help with that one right now.  Here's what I *can* help you with: • Order tracking — where is my order, delivery updates • Cancellations & refunds — ",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-oos-3.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-F960C2A7",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:42.346030+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-1.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund",
+        "damaged_product",
+        "electronics"
+      ]
+    },
+    {
+      "interaction_id": "INT-2C845E1F",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:42.699363+00:00",
+      "summary": "I completely understand how important this is, and I want to make sure it's handled properly. Since the refund amount of Rs.42,000 is above our automated processing limit of Rs.25,000, this needs to b",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund",
+        "damaged_product"
+      ]
+    },
+    {
+      "interaction_id": "INT-E3796EDD",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:43.031122+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-464CAC. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-DB6213CE",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:43.371023+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-464CAC. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-6BFFA4AD",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:43.710255+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-464CAC. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-63CF0F1E",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:44.061161+00:00",
+      "summary": "Item 2 on order ORD-78321 has been successfully cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j3-below.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-CE633849",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:44.404617+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-resp.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-A68AA982",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:44.755541+00:00",
+      "summary": "I completely understand how important this is, and I want to make sure it's handled properly. Since the refund amount of Rs.50,000 is above our automated processing limit of Rs.25,000, this needs to b",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-pay.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-EC0D90C9",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:45.104643+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-02C981FD",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:45.451487+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-latency.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-81D04FB3",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:45.819005+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-88EA779B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-00000",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:46.166293+00:00",
+      "summary": "I looked everywhere but couldn't find an order with the ID ORD-00000. Could you double-check the order number and try again? If you think this is a mistake, please reach out to us with your registered",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-404.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-6E76E447",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:46.509984+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-halluc.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-9A87E39C",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:46.863753+00:00",
+      "summary": "Item 2 on order ORD-78321 has been successfully cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2a-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-4934CF50",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:47.214582+00:00",
+      "summary": "Item 2 on order ORD-78321 has been successfully cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2a-state.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-ED9A8AFE",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:47.570187+00:00",
+      "summary": "Done! Order ORD-78321 has been fully cancelled. All 1 item(s) have been marked as cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2b-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-60A24F17",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:47.922794+00:00",
+      "summary": "Done! Order ORD-78321 has been fully cancelled. All 1 item(s) have been marked as cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2b-state.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-F9C8144D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:48.271559+00:00",
+      "summary": "The delivery address for order ORD-79500 has been updated successfully. Your order will now be shipped to: 4th Floor, Prestige Tower, Outer Ring Road, Bengaluru, Karnataka, 560103  I hope that's all s",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2c-1.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-4B6A2E56",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:48.639671+00:00",
+      "summary": "Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2d-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry",
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-ACEAEDCA",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:48.997951+00:00",
+      "summary": "Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2d-2.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry",
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-FBA4D896",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:49.346514+00:00",
+      "summary": "It looks like item 2 on order ORD-79500 was already cancelled previously. No further action is needed on our end.  I hope that's all sorted for you. Let me know if there's anything else you need.",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-gate-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-804CDA55",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:49.759155+00:00",
+      "summary": "It looks like item 2 on order ORD-79500 was already cancelled previously. No further action is needed on our end.  I hope that's all sorted for you. Let me know if there's anything else you need.",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-gate-2.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-908BBB95",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:50.115464+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j2f-1.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-369CABE4",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:50.464432+00:00",
+      "summary": "Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-coerce-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-E4447C71",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:51.118441+00:00",
+      "summary": "I found your previous interactions with us. Here's a summary:  1.  2026-05-29  —  Escalated     It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team i",
+      "agent_notes": "Handled via AtlasCare. Journey: J4. Session: t-j4-1.",
+      "resolution": "resolved",
+      "tags": [
+        "repeat_contact",
+        "history_lookup",
+        "electronics"
+      ]
+    },
+    {
+      "interaction_id": "INT-A70BE985",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:51.775802+00:00",
+      "summary": "I found your previous interactions with us. Here's a summary:  1.  2026-05-29  —  Resolved     I found your previous interactions with us. Here's a summary:  1.  2026-05-29  —  Resolved     Item 3 on ",
+      "agent_notes": "Handled via AtlasCare. Journey: J4. Session: t-j4-2.",
+      "resolution": "resolved",
+      "tags": [
+        "repeat_contact",
+        "history_lookup"
+      ]
+    },
+    {
+      "interaction_id": "INT-4490EDE5",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:52.124639+00:00",
+      "summary": "I found your case! Case CASE-DB504A has been closed. It was opened on 2026-05-22. The amount involved is Rs.42,000. Details on file: Customer requesting refund of Rs.42,000.00. Exceeds auto-refund thr",
+      "agent_notes": "Handled via AtlasCare. Journey: J5. Session: t-j5-1.",
+      "resolution": "resolved",
+      "tags": [
+        "case_status_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-5402CB85",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:52.474205+00:00",
+      "summary": "I wasn't able to find a case with the ID CASE-AB1234 in our system. Could you double-check the reference number? If you have the order ID handy, I can try looking it up that way instead.  Is there any",
+      "agent_notes": "Handled via AtlasCare. Journey: J5. Session: t-j5-2.",
+      "resolution": "resolved",
+      "tags": [
+        "case_status_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-2EE9C6A9",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:52.822956+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: t-kb-1.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-881DF433",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:53.172982+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: t-kb-2.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-F7B7640F",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:53.534760+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: t-kb-3.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-39054A78",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:53.962857+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-memory-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-46D2CA74",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:54.300294+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-memory-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-A93C986C",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:54.640545+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-mem-a.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-8D46A38C",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:54.974641+00:00",
+      "summary": "I'd love to help you with that! Could you please share your order ID? It usually looks something like ORD-78321. You can find it in your order confirmation email.  Is there anything else I can help yo",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-mem-b.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-9B47AD3E",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:55.318431+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-trace-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-4CB14B64",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:55.677929+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-trace-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-2C4878C8",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:56.032048+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-trace-3.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-35BA82F4",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:56.376118+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-audit-1.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-8A497FC1",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:56.724931+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-audit-2.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-E7DB081A",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:57.081172+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-metrics-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-338435B8",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:57.457134+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-metrics-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-2D36ACE1",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:57.812700+00:00",
+      "summary": "I'd love to help you with that! Could you please share your order ID? It usually looks something like ORD-78321. You can find it in your order confirmation email.  Is there anything else I can help yo",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-stream-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-3BBE4C02",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T04:58:58.298760+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-stream-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-E92C68C2",
+      "customer_id": "CUST-002",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:49.829173+00:00",
+      "summary": "I wasn't able to access order ORD-79500 — it doesn't appear to be linked to your account. Please double-check the order ID. If you believe this is an error, our support team will be happy to investiga",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: cross-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-30D73B50",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:51.748394+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-4F9E48EE",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:52.157900+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-B8AB2EE9",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:52.557352+00:00",
+      "summary": "You're welcome! 😊 Is there anything else I can help you with? I'm here for order tracking, cancellations, refunds, or any policy questions.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-2.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-A0E52FDC",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:52.955791+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-3.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-5550635D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:53.445350+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-greet-4.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-5CBFEC63",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:53.905760+00:00",
+      "summary": "Hello! Welcome to AtlasCare Support. 👋 How can I help you today? I can assist with: • Order tracking & status • Cancellations & refunds • Delivery address updates • Return & exchange policies",
+      "agent_notes": "Handled via AtlasCare. Journey: J-GREET. Session: t-greet-5.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-BA97A39F",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:54.308674+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-FED7ECDD",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:54.703940+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-2.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-BC4C026F",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:55.048852+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-3.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-12DB1935",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:55.397370+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-4.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-663FDB9A",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:55.762547+00:00",
+      "summary": "I'm sorry, I wasn't able to understand that message. Could you rephrase your question? I'm here to help with order tracking, cancellations, refunds, and policies.",
+      "agent_notes": "Handled via AtlasCare. Journey: J-BLOCKED. Session: t-blocked-5.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-F369392E",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:56.121635+00:00",
+      "summary": "I appreciate you reaching out, but I'm not able to help with that one right now.  Here's what I *can* help you with: • Order tracking — where is my order, delivery updates • Cancellations & refunds — ",
+      "agent_notes": "Handled via AtlasCare. Journey: J-OOS. Session: t-oos-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-FB183694",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:56.513346+00:00",
+      "summary": "I appreciate you reaching out, but I'm not able to help with that one right now.  Here's what I *can* help you with: • Order tracking — where is my order, delivery updates • Cancellations & refunds — ",
+      "agent_notes": "Handled via AtlasCare. Journey: J-OOS. Session: t-oos-2.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-D3303D95",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:56.921261+00:00",
+      "summary": "I appreciate you reaching out, but I'm not able to help with that one right now.  Here's what I *can* help you with: • Order tracking — where is my order, delivery updates • Cancellations & refunds — ",
+      "agent_notes": "Handled via AtlasCare. Journey: J-OOS. Session: t-oos-3.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-B40BEA08",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:57.304752+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-1.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund",
+        "damaged_product",
+        "electronics"
+      ]
+    },
+    {
+      "interaction_id": "INT-577C8B20",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:57.704587+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-464CAC. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund",
+        "damaged_product"
+      ]
+    },
+    {
+      "interaction_id": "INT-B11A3EA1",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:58.070599+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-464CAC. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-7BD167D9",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:58.423045+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-464CAC. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-16AE4E76",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:58.789543+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-464CAC. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-fmt.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-8AED18D7",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:59.146701+00:00",
+      "summary": "Item 2 on order ORD-78321 has been successfully cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j3-below.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-EE538723",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:59.508295+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-resp.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-051621C6",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:03:59.872076+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-43C64D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j3-pay.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-A8601D1B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:00.226657+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-BB17BCA5",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:00.623345+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-latency.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-CE1E7C5E",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:01.045268+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-7D31F25B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-00000",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:01.443693+00:00",
+      "summary": "I looked everywhere but couldn't find an order with the ID ORD-00000. Could you double-check the order number and try again? If you think this is a mistake, please reach out to us with your registered",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-404.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-BDEBB23F",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:01.835911+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-j1-halluc.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-C81FAD23",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:02.202474+00:00",
+      "summary": "Item 2 on order ORD-78321 has been successfully cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2a-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-0D93B43B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:02.696659+00:00",
+      "summary": "Item 2 on order ORD-78321 has been successfully cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2a-state.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-670BE3F9",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:03.012604+00:00",
+      "summary": "Done! Order ORD-78321 has been fully cancelled. All 1 item(s) have been marked as cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2b-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-694FD24B",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:03.358724+00:00",
+      "summary": "Done! Order ORD-78321 has been fully cancelled. All 1 item(s) have been marked as cancelled.  Your refund of Rs.1,500 has been successfully initiated. It will be credited back to your original payment",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2b-state.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation"
+      ]
+    },
+    {
+      "interaction_id": "INT-708F9CC6",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:03.672785+00:00",
+      "summary": "The delivery address for order ORD-79500 has been updated successfully. Your order will now be shipped to: 4th Floor, Prestige Tower, Outer Ring Road, Bengaluru, Karnataka, 560103  I hope that's all s",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2c-1.",
+      "resolution": "resolved",
+      "tags": [
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-160AB454",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:04.018701+00:00",
+      "summary": "Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2d-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry",
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-BB9046D3",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:04.362743+00:00",
+      "summary": "Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-j2d-2.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry",
+        "address_change"
+      ]
+    },
+    {
+      "interaction_id": "INT-B60E7793",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:04.685312+00:00",
+      "summary": "It looks like item 2 on order ORD-79500 was already cancelled previously. No further action is needed on our end.  I hope that's all sorted for you. Let me know if there's anything else you need.",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-gate-1.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-8D66927F",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:05.051741+00:00",
+      "summary": "It looks like item 2 on order ORD-79500 was already cancelled previously. No further action is needed on our end.  I hope that's all sorted for you. Let me know if there's anything else you need.",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-gate-2.",
+      "resolution": "resolved",
+      "tags": [
+        "cancellation",
+        "refund_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-B3F5EBEE",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:05.348568+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-j2f-1.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-6B7F4C5A",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:05.734659+00:00",
+      "summary": "Item 3 on order ORD-79500 has been successfully cancelled.  Your refund of Rs.1,299 has been successfully initiated. It will be credited back to your original payment method. Please allow up to 5 busi",
+      "agent_notes": "Handled via AtlasCare. Journey: J2. Session: t-coerce-1.",
+      "resolution": "resolved",
+      "tags": []
+    },
+    {
+      "interaction_id": "INT-D0CB512D",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:06.430012+00:00",
+      "summary": "I found your previous interactions with us. Here's a summary:  1.  2026-05-29  —  Escalated     It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team i",
+      "agent_notes": "Handled via AtlasCare. Journey: J4. Session: t-j4-1.",
+      "resolution": "resolved",
+      "tags": [
+        "repeat_contact",
+        "history_lookup",
+        "electronics"
+      ]
+    },
+    {
+      "interaction_id": "INT-8287126D",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:07.125732+00:00",
+      "summary": "I found your previous interactions with us. Here's a summary:  1.  2026-05-29  —  Resolved     I found your previous interactions with us. Here's a summary:  1.  2026-05-29  —  Resolved     Item 3 on ",
+      "agent_notes": "Handled via AtlasCare. Journey: J4. Session: t-j4-2.",
+      "resolution": "resolved",
+      "tags": [
+        "repeat_contact",
+        "history_lookup"
+      ]
+    },
+    {
+      "interaction_id": "INT-ACB78FFB",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:07.548856+00:00",
+      "summary": "I found your case! Case CASE-DB504A has been closed. It was opened on 2026-05-22. The amount involved is Rs.42,000. Details on file: Customer requesting refund of Rs.42,000.00. Exceeds auto-refund thr",
+      "agent_notes": "Handled via AtlasCare. Journey: J5. Session: t-j5-1.",
+      "resolution": "resolved",
+      "tags": [
+        "case_status_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-04507127",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:07.920542+00:00",
+      "summary": "I wasn't able to find a case with the ID CASE-AB1234 in our system. Could you double-check the reference number? If you have the order ID handy, I can try looking it up that way instead.  Is there any",
+      "agent_notes": "Handled via AtlasCare. Journey: J5. Session: t-j5-2.",
+      "resolution": "resolved",
+      "tags": [
+        "case_status_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-DCA03F5C",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:08.313830+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: t-kb-1.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-F4EF9393",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:08.778336+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: t-kb-2.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-3FEE44BF",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:09.176107+00:00",
+      "summary": "Here's a summary of the relevant policies for you:  Return Window Policy Customers must raise refund or return requests within 30 days of delivery. Damaged or defective items are eligible for a full r",
+      "agent_notes": "Handled via AtlasCare. Journey: J-KB. Session: t-kb-3.",
+      "resolution": "resolved",
+      "tags": [
+        "policy_inquiry"
+      ]
+    },
+    {
+      "interaction_id": "INT-240C50A0",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:09.577246+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-memory-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-7C116270",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:09.946540+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-memory-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-B49EA468",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:10.338386+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-mem-a.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-53A26B4A",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:10.717909+00:00",
+      "summary": "I'd love to help you with that! Could you please share your order ID? It usually looks something like ORD-78321. You can find it in your order confirmation email.  Is there anything else I can help yo",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-mem-b.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-FCCCF294",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:11.090465+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-trace-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-8E24CD03",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:11.446126+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-trace-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-88965DB3",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:11.847676+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-trace-3.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-846FB8B0",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:12.243562+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-audit-1.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-04690921",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:12.644042+00:00",
+      "summary": "It looks like a case is already open for this request — your reference number is CASE-25DD9D. Our team is already on it and will get back to you within 24 hours. No need to raise another case.  I know",
+      "agent_notes": "Handled via AtlasCare. Journey: J3. Session: t-audit-2.",
+      "resolution": "escalated",
+      "tags": [
+        "escalation",
+        "high_value_refund"
+      ]
+    },
+    {
+      "interaction_id": "INT-9E9087DF",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:13.008026+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-metrics-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-A19FCA2F",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:13.411704+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-metrics-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-4B60D401",
+      "customer_id": "CUST-001",
+      "order_id": null,
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:13.837001+00:00",
+      "summary": "I'd love to help you with that! Could you please share your order ID? It usually looks something like ORD-78321. You can find it in your order confirmation email.  Is there anything else I can help yo",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-stream-1.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
+      ]
+    },
+    {
+      "interaction_id": "INT-DC19ED97",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "channel": "chat",
+      "timestamp": "2026-05-29T05:04:14.327133+00:00",
+      "summary": "Your order ORD-79500 is on its way to you. You can track it using tracking number: TRACK-9A2B3C Estimated delivery date: 2026-06-03  Is there anything else I can help you with today?",
+      "agent_notes": "Handled via AtlasCare. Journey: J1. Session: t-stream-2.",
+      "resolution": "resolved",
+      "tags": [
+        "tracking",
+        "order_status"
       ]
     }
   ]

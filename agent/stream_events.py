@@ -76,4 +76,5 @@ TOOL_LABELS: dict = {
     "clarify_customer_id":               "Preparing a clarification...",
     "unauthorized_order_access":         "Verifying account access...",
     "blocked_injection":                 "Processing your message...",
+    "out_of_scope":                      "Checking what I can help with...",
 }

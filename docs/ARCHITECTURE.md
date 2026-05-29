@@ -89,6 +89,7 @@ POST /query  or  POST /query/stream
 | **J5** | Case status lookup | 1 (Groq) | `get_case_status` |
 | **J-KB** | Policy / returns / warranty | 1 (Groq) | `search_kb` |
 | **J-BLOCKED** | Prompt injection detected | 0 | `blocked_injection` sentinel |
+| **J-OOS** | Request outside supported journeys | 0 | `out_of_scope` sentinel |
 
 **Maximum 1 Groq call per request.**
 
@@ -164,9 +165,9 @@ Explicit ✗ violation list lets the model self-check before returning the plan.
 
 ---
 
-## 9. Executor — Gate Check Between Steps
+## 9. Executor — Gate Check, Unknown Tools & Non-Blocking Execution
 
-The executor (`agent/executor.py`) validates cancel tool output before allowing downstream steps to run:
+**Gate check** — validates cancel output before allowing downstream steps:
 
 ```
 cancel_order_item → {already_cancelled: True}
@@ -179,6 +180,10 @@ cancel_order_item → {already_cancelled: True}
 ```
 
 This prevents phantom refunds when an item was cancelled moments before the request arrived.
+
+**Unknown tool handling** — if the LLM returns a tool name not in the executor registry (e.g. a hallucinated tool), execution does not crash. Instead the executor fires the `out_of_scope` sentinel, which routes to J-OOS and returns a friendly "here's what I can help with" response.
+
+**Non-blocking execution** — the executor runs synchronous tool code (disk I/O, ChromaDB, payment retries) inside `asyncio.run_in_executor(None, ...)`, which offloads it to a thread pool. This frees the uvicorn event loop to serve concurrent requests during tool execution. Tool steps remain sequential within a single request — the J2 cancel→refund dependency is fully preserved.
 
 ---
 
@@ -248,6 +253,7 @@ All tools extend `TracedTool` (`tools/base.py`), which auto-records every call i
 | `get_customer_interaction_history` | `tools/crm.py` | J4 |
 | `search_kb` | `tools/kb.py` | J-KB |
 | `greeting` | `tools/oms.py` | J-GREET (no-op sentinel) |
+| `out_of_scope` | `tools/oms.py` | J-OOS (no-op sentinel) |
 
 ---
 

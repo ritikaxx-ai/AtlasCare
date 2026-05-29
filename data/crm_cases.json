@@ -940,6 +940,39 @@
       "amount_inr": 73300.0,
       "trace_id": "trc-58a9a019",
       "created_at": "2026-05-28T16:59:29.551450+00:00"
+    },
+    {
+      "case_id": "CASE-25DD9D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-78321",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund for item 1 (Dell Inspiron 15 Laptop) worth Rs.55000.",
+      "amount_inr": 55000.0,
+      "trace_id": "trc-c8e8e689",
+      "created_at": "2026-05-29T04:46:16.111184+00:00"
+    },
+    {
+      "case_id": "CASE-464CAC",
+      "customer_id": "UNKNOWN",
+      "order_id": "UNKNOWN",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.42,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 42000.0,
+      "trace_id": "trc-2c845e1f",
+      "created_at": "2026-05-29T04:58:42.692743+00:00"
+    },
+    {
+      "case_id": "CASE-43C64D",
+      "customer_id": "CUST-001",
+      "order_id": "ORD-79500",
+      "status": "open",
+      "priority": "high",
+      "description": "Customer requesting refund of Rs.50,000.00. Exceeds auto-refund threshold. Requires specialist review.",
+      "amount_inr": 50000.0,
+      "trace_id": "trc-a68aa982",
+      "created_at": "2026-05-29T04:58:44.748324+00:00"
     }
   ]
 }

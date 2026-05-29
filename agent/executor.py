@@ -25,6 +25,7 @@ from tools.oms import (
     blocked_injection,
     address_clarification_needed,
     greeting,
+    out_of_scope,
 )
 from tools.crm import (
     get_customer_profile,
@@ -66,6 +67,7 @@ class Executor:
             "execute_refund": execute_refund,
             "address_clarification_needed": address_clarification_needed,
             "greeting": greeting,
+            "out_of_scope": out_of_scope,
         }
 
     # Tools whose soft-failure output must block downstream refund/address steps.
@@ -89,7 +91,10 @@ class Executor:
         for step in plan.steps:
             tool_class = self.tools.get(step.tool)
             if not tool_class:
-                raise ValueError(f"Unknown tool requested in plan: {step.tool}")
+                # LLM returned a tool we don't support — treat as out-of-scope
+                oos = self.tools["out_of_scope"](self.trace_ctx)
+                oos(original_tool=step.tool)
+                break
 
             # ── Ownership check: block cross-customer order access ────────────
             if self.customer_id and step.tool in self._ORDER_TOOLS:

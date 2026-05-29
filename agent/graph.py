@@ -38,7 +38,7 @@ from agent.fast_paths import (
 from agent.pydantic_agents import generate_plan_llm
 from agent.executor import Executor
 from agent.metrics import get_metrics_collector
-from agent.session_memory import resolve_order_id, resolve_case_id, update_session, get_recent_turns
+from agent.session_memory import resolve_order_id, resolve_case_id, update_session, get_recent_turns, get_customer_id
 import agent.stream_events as stream_events
 from schemas.plan import ExecutionPlan, PlanStep
 from schemas.trace import TraceContext
@@ -249,10 +249,11 @@ def _infer_journey(plan: ExecutionPlan) -> str:
         "clarify_order_id": "J1",
         "blocked_injection": "J-BLOCKED",
         "greeting": "J-GREET",
+        "out_of_scope": "J-OOS",
     }
     if plan.steps:
-        return tool_to_journey.get(plan.steps[0].tool, "J2")
-    return "J2"
+        return tool_to_journey.get(plan.steps[0].tool, "J-OOS")
+    return "J-OOS"
 
 
 def _deterministic_fallback(
@@ -275,14 +276,22 @@ def _deterministic_fallback(
 # Runs every step in the ExecutionPlan sequentially.
 # Creates a fresh TraceContext, passes it to the Executor, then serialises
 # the completed trace (tool names, inputs, outputs, latencies) into state["trace"].
-def _executor_node(state: AgentState) -> AgentState:
+#
+# NOTE: run_in_executor moves the synchronous tool chain off the uvicorn event
+# loop so other requests are not blocked while tools run (disk I/O, ChromaDB
+# queries, payment gateway retries with backoff). Without this, a single slow
+# tool call causes head-of-line blocking — all concurrent requests stall until
+# it completes. Tools remain sequential within the plan (J2 cancel → refund
+# dependency is preserved); only the event loop is freed during that wait.
+async def _executor_node(state: AgentState) -> AgentState:
     trace = TraceContext(
         trace_id=state["trace_id"],
         session_id=state["session_id"],
         tool_calls=[],
     )
     executor = Executor(trace, customer_id=state.get("customer_id"))
-    executor.run_plan(ExecutionPlan(**state["plan"]))
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, executor.run_plan, ExecutionPlan(**state["plan"]))
     state["trace"] = trace.model_dump()
     return state
 
@@ -457,7 +466,7 @@ def _log_interaction(
         from agent.cache import get_data_store
 
         order_id = extract_order_id(message)
-        customer_id = extract_customer_id(message) or "UNKNOWN"
+        customer_id = session_id and get_customer_id(session_id) or "UNKNOWN"
 
         # Derive resolution from journey type
         resolution_map = {

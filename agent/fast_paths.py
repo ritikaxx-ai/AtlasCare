@@ -510,6 +510,18 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
                 "You can find it in your order confirmation email."
             )
 
+        elif name == "out_of_scope":
+            parts.append(
+                "I appreciate you reaching out, but I'm not able to help with that one right now.\n\n"
+                "Here's what I *can* help you with:\n"
+                "• **Order tracking** — where is my order, delivery updates\n"
+                "• **Cancellations & refunds** — cancel an item or a full order, request a refund\n"
+                "• **Delivery address changes** — update where your order is being shipped\n"
+                "• **Return & exchange policies** — rules, windows, eligibility\n"
+                "• **Support case status** — follow up on a raised case\n\n"
+                "If your issue is urgent or not listed above, I can raise a support case and a specialist will get back to you shortly."
+            )
+
         elif name == "blocked_injection":
             parts.append(
                 "I'm sorry, I wasn't able to understand that message.\n"
@@ -747,6 +759,7 @@ def synthesize_from_trace(message: str, trace: TraceContext, journey_type: str) 
         "J4": "How else can I help you today?",
         "J5": "Is there anything else I can assist you with?",
         "J-KB": "I hope that answers your question! Feel free to ask if you need anything else.",
+        "J-OOS": "Is there anything else I can help you with today?",
     }.get(journey_type, "")
 
     # Join blocks with a blank line between each for clear visual separation
